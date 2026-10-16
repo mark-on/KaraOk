@@ -20,6 +20,9 @@ package org.oxycblt.auxio.home
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
@@ -35,6 +38,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
@@ -128,6 +132,23 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
             FadingToolbarOffsetListener(binding.homeToolbar, binding.homeContent)
         )
         binding.homeNormalToolbar.apply {
+            val brand = SpannableString(getString(R.string.info_app_name))
+            val accentStart = brand.indexOf("Ok")
+            if (accentStart >= 0) {
+                brand.setSpan(
+                    ForegroundColorSpan(
+                        MaterialColors.getColor(
+                            this,
+                            androidx.appcompat.R.attr.colorPrimary,
+                            0xFF874ABF.toInt(),
+                        )
+                    ),
+                    accentStart,
+                    accentStart + 2,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+                )
+            }
+            title = brand
             setOnMenuItemClickListener(this@HomeFragment)
             MenuCompat.setGroupDividerEnabled(menu, true)
         }

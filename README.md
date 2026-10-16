@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="fastlane/metadata/android/en-US/images/icon.png" width="150" alt="KaraOk icon">
+  <img src="app/src/main/res/drawable-nodpi/karaok_logo.png" width="150" alt="KaraOk dinosaur logo">
 </p>
 
 <h1 align="center"><b>KaraOk</b></h1>
@@ -7,10 +7,10 @@
 
 <p align="center">
   <a href="https://github.com/mark-on/KaraOk/releases/latest">
-    <img alt="Latest release" src="https://img.shields.io/github/v/release/mark-on/KaraOk?color=64B5F6&style=flat">
+    <img alt="Latest release" src="https://img.shields.io/github/v/release/mark-on/KaraOk?color=C28AFA&style=flat">
   </a>
   <a href="https://github.com/mark-on/KaraOk/releases">
-    <img alt="Downloads" src="https://img.shields.io/github/downloads/mark-on/KaraOk/total.svg?color=4B95DE&style=flat">
+    <img alt="Downloads" src="https://img.shields.io/github/downloads/mark-on/KaraOk/total.svg?color=60DEC7&style=flat">
   </a>
   <a href="https://www.gnu.org/licenses/gpl-3.0">
     <img alt="GPLv3" src="https://img.shields.io/badge/license-GPL%20v3-2B6DBE.svg?style=flat">
@@ -30,7 +30,7 @@
 
 **KaraOk is a fork of [Auxio](https://github.com/OxygenCobalt/Auxio) that adds lyrics directly to the Now Playing screen.**
 
-It preserves Auxio's Material You design, local playback, performance, and minimalist approach. Tapping the album artwork opens a clean lyrics overlay: the player remains visible in the background, lyrics scroll above it, and playback continues uninterrupted.
+It preserves Auxio's Material You foundations, local playback, performance, and minimalist approach. KaraOk adds its own violet-and-mint theme and dinosaur launcher artwork. Tapping the album artwork or its lyrics icon opens a clean lyrics overlay: the player remains visible in the background, lyrics scroll above it, and playback continues uninterrupted.
 
 KaraOk uses a separate application ID (`com.markon.karaok`), so it can be installed alongside Auxio.
 
@@ -40,7 +40,8 @@ KaraOk looks for lyrics in this order:
 
 1. lyrics embedded in the audio file's metadata;
 2. a local `.lrc` file associated with the track;
-3. the [LRCLIB](https://lrclib.net) online service.
+3. previously downloaded lyrics in the app's persistent local storage;
+4. the [LRCLIB](https://lrclib.net) online service, when requested manually or allowed by the automatic-search setting.
 
 Supported features include:
 
@@ -49,10 +50,12 @@ Supported features include:
 - temporary auto-scroll suspension while scrolling manually;
 - unsynchronized lyrics in a clean, scrollable view;
 - updates after pausing, seeking, skipping, or changing tracks;
-- local caching for downloaded lyrics;
+- persistent local storage for downloaded lyrics;
+- optional automatic searching for the current and next track, with a Wi-Fi-only setting;
+- a manual Search online action when lyrics are missing;
 - graceful handling of offline use, missing lyrics, and malformed LRC files.
 
-> KaraOk currently **reads** embedded lyrics but does not modify audio-file metadata. Lyrics retrieved from LRCLIB are stored in the app's local cache.
+> KaraOk currently **reads** embedded lyrics but does not modify audio-file metadata. Automatic online searching is off by default. Downloaded lyrics remain in the app's private files until app data is cleared.
 
 ## Screenshots
 
@@ -67,7 +70,7 @@ Supported features include:
   <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot5.png" width="245" alt="Settings">
 </p>
 
-<p align="center"><i>The base interface and screenshots come from Auxio; KaraOk intentionally preserves the same visual language.</i></p>
+<p align="center"><i>These are inherited Auxio screenshots, not captures of the current KaraOk redesign. Updated screenshots will follow device testing.</i></p>
 
 ## Core features
 
@@ -105,7 +108,8 @@ The APK is generated in `app/build/outputs/apk/debug/`.
 - audio-file access, to index and play music;
 - foreground service and wake lock, for background playback;
 - notifications, for media controls;
-- internet access, used only for optional lyrics retrieval from LRCLIB.
+- internet access, used only for optional lyrics retrieval from LRCLIB;
+- network-state access, used to honor the Wi-Fi-only automatic-download setting.
 
 No additional permission is requested to find local LRC files.
 

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="set_key_lyrics_enabled" translatable="false">karaok_lyrics_enabled</string>
+    <string name="set_key_lyrics_auto" translatable="false">karaok_lyrics_auto</string>
+    <string name="set_key_lyrics_wifi_only" translatable="false">karaok_lyrics_wifi_only</string>
+    <string name="set_key_lyrics_preload_next" translatable="false">karaok_lyrics_preload_next</string>
+    <string name="set_key_lyrics_show_kara" translatable="false">karaok_lyrics_show_kara</string>
     <!-- Note: The old way of naming keys was to prefix them with KEY_. Now it's to prefix them with auxio_. -->
     <string name="set_key_ui" translatable="false">auxio_ui</string>
     <string name="set_key_personalize" translatable="false">auxio_personalize</string>

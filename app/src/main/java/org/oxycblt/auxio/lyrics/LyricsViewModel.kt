@@ -44,6 +44,7 @@ class LyricsViewModel
 @Inject
 constructor(
     private val repository: LyricsRepository,
+    val preferences: LyricsPreferences,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val isOpen: StateFlow<Boolean> = savedStateHandle.getStateFlow(KEY_OPEN, false)
@@ -53,8 +54,10 @@ constructor(
 
     private var currentSong: Song? = null
     private var loadJob: Job? = null
+    private var prefetchJob: Job? = null
 
     fun open(song: Song) {
+        prefetchJob?.cancel()
         currentSong = song
         savedStateHandle[KEY_OPEN] = true
         load(song)
@@ -64,18 +67,34 @@ constructor(
         savedStateHandle[KEY_OPEN] = false
     }
 
+    fun searchOnline() {
+        currentSong?.let { load(it, manualSearch = true) }
+    }
+
+    /** Preload at most the playing track and its immediate successor; retain only disk data. */
+    fun onQueueChanged(queue: List<Song>, index: Int) {
+        prefetchJob?.cancel()
+        if (!preferences.automaticDownloadAllowed()) return
+        val upcoming = queue.getOrNull(index) ?: return
+        prefetchJob = viewModelScope.launch {
+            if (!isOpen.value) repository.get(upcoming)
+            if (preferences.preloadNext) queue.getOrNull(index + 1)?.let { repository.get(it) }
+        }
+    }
+
     fun onSongChanged(song: Song?) {
         if (song == currentSong) return
         currentSong = song
         if (isOpen.value && song != null) load(song)
     }
 
-    private fun load(song: Song) {
+    private fun load(song: Song, manualSearch: Boolean = false) {
         loadJob?.cancel()
         state.value = LyricsLoadState.Loading
         loadJob = viewModelScope.launch {
             state.value =
-                repository.get(song)?.let(LyricsLoadState::Ready) ?: LyricsLoadState.Unavailable
+                repository.get(song, manualSearch)?.let(LyricsLoadState::Ready)
+                    ?: LyricsLoadState.Unavailable
         }
     }
 

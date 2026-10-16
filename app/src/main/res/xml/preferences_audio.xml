@@ -29,6 +29,44 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/set_lyrics">
+
+        <SwitchPreferenceCompat
+            app:key="@string/set_key_lyrics_enabled"
+            app:defaultValue="true"
+            app:title="@string/set_lyrics_enabled"
+            app:summary="@string/set_lyrics_enabled_desc" />
+
+        <SwitchPreferenceCompat
+            app:key="@string/set_key_lyrics_auto"
+            app:defaultValue="false"
+            app:dependency="@string/set_key_lyrics_enabled"
+            app:title="@string/set_lyrics_auto"
+            app:summary="@string/set_lyrics_auto_desc" />
+
+        <SwitchPreferenceCompat
+            app:key="@string/set_key_lyrics_wifi_only"
+            app:defaultValue="true"
+            app:dependency="@string/set_key_lyrics_auto"
+            app:title="@string/set_lyrics_wifi_only"
+            app:summary="@string/set_lyrics_wifi_only_desc" />
+
+        <SwitchPreferenceCompat
+            app:key="@string/set_key_lyrics_preload_next"
+            app:defaultValue="true"
+            app:dependency="@string/set_key_lyrics_auto"
+            app:title="@string/set_lyrics_preload_next"
+            app:summary="@string/set_lyrics_preload_next_desc" />
+
+        <SwitchPreferenceCompat
+            app:key="@string/set_key_lyrics_show_kara"
+            app:defaultValue="true"
+            app:dependency="@string/set_key_lyrics_enabled"
+            app:title="@string/set_lyrics_show_kara"
+            app:summary="@string/set_lyrics_show_kara_desc" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/set_replay_gain">
 
         <org.oxycblt.auxio.settings.ui.IntListPreference

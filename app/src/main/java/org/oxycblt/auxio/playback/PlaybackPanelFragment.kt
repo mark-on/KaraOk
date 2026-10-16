@@ -81,7 +81,7 @@ class PlaybackPanelFragment :
     Toolbar.OnMenuItemClickListener,
     StyledSeekBar.Listener,
     StepperOverlay.Listener {
-    private val coverPagerAdapter = CoverPagerAdapter(this)
+    private val coverPagerAdapter = CoverPagerAdapter(this) { lyricsModel.preferences.enabled }
     private val playbackModel: PlaybackViewModel by activityViewModels()
     private val detailModel: DetailViewModel by activityViewModels()
     private val listModel: ListViewModel by activityViewModels()
@@ -91,6 +91,13 @@ class PlaybackPanelFragment :
     private var userAwarePagerCallback: UserAwarePagerCallback? = null
     private var lyricsOverlay: LyricsOverlayView? = null
     private var lyricsBackCallback: OnBackPressedCallback? = null
+
+    override fun onResume() {
+        super.onResume()
+        if (!lyricsModel.preferences.enabled) lyricsModel.close()
+        lyricsOverlay?.setShowMascot(lyricsModel.preferences.showKara)
+        coverPagerAdapter.notifyDataSetChanged()
+    }
 
     override fun onCreateBinding(inflater: LayoutInflater) =
         FragmentPlaybackPanelBinding.inflate(inflater)
@@ -123,7 +130,9 @@ class PlaybackPanelFragment :
         lyricsOverlay =
             LyricsOverlayView(requireContext()).also { overlay ->
                 overlay.onClose = lyricsModel::close
+                overlay.onSearchOnline = lyricsModel::searchOnline
                 overlay.attachTo(binding.root as ViewGroup)
+                overlay.post { overlay.setShowMascot(lyricsModel.preferences.showKara) }
             }
 
         binding.playbackPager?.apply {
@@ -290,6 +299,7 @@ class PlaybackPanelFragment :
         L.d("Updating song display: $song")
         binding.playbackSong.text = song.name.resolve(context)
         binding.playbackArtist.text = song.artists.resolveNames(context)
+        lyricsOverlay?.setTrack(binding.playbackSong.text, binding.playbackArtist.text)
         binding.playbackAlbum?.text = song.album.name.resolve(context)
         binding.playbackSeekBar?.durationDs = song.durationMs.msToDs()
     }
@@ -342,6 +352,7 @@ class PlaybackPanelFragment :
     }
 
     private fun updatePager(queue: PagerQueue) {
+        lyricsModel.onQueueChanged(queue.queue, queue.index)
         // Right now there's easily 140ms of frame skipping when going next/prev. This is primarily
         // the fault of specifically the nested bottom sheet UI setup, which is intractable to
         // optimize. If I don't do multiple remeasures/relayouts on every slightest state
@@ -442,6 +453,6 @@ class PlaybackPanelFragment :
     }
 
     override fun onSingleTap() {
-        playbackModel.song.value?.let(lyricsModel::open)
+        if (lyricsModel.preferences.enabled) playbackModel.song.value?.let(lyricsModel::open)
     }
 }

@@ -65,4 +65,20 @@ class LyricsResolverTest {
             cacheDirectory.deleteRecursively()
         }
     }
+
+    @Test
+    fun disabledAutomaticSearchStillUsesSavedLyricsWithoutCallingNetwork() = runBlocking {
+        val cacheDirectory = Files.createTempDirectory("lyrics-cache").toFile()
+        try {
+            val resolver = LyricsResolver(DiskLyricsCache(cacheDirectory))
+            val disabledNetwork = LyricsSource { null }
+            assertNull(resolver.resolve("missing", emptyList(), disabledNetwork))
+
+            resolver.resolve("saved", emptyList(), LyricsSource { "[00:01]Saved line" })
+            val saved = resolver.resolve("saved", emptyList(), disabledNetwork)
+            assertEquals("Saved line", requireNotNull(saved).lines.single().text)
+        } finally {
+            cacheDirectory.deleteRecursively()
+        }
+    }
 }

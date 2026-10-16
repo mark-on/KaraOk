@@ -119,6 +119,7 @@
 
     <string name="lbl_playback">Now playing</string>
     <string name="lbl_lyrics_unavailable">Lyrics are not available for this song</string>
+    <string name="lbl_lyrics_search_online">Search online</string>
     <string name="lbl_equalizer">Equalizer</string>
     <string name="lbl_play">Play</string>
     <string name="lbl_shuffle">Shuffle</string>
@@ -299,6 +300,17 @@
     <string name="set_audio">Audio</string>
     <string name="set_audio_desc">Configure sound and playback behavior</string>
     <string name="set_playback">Playback</string>
+    <string name="set_lyrics">Lyrics</string>
+    <string name="set_lyrics_enabled">Show lyrics</string>
+    <string name="set_lyrics_enabled_desc">Display lyrics over Now Playing</string>
+    <string name="set_lyrics_auto">Search for missing lyrics automatically</string>
+    <string name="set_lyrics_auto_desc">Search LRCLIB for the playing track when local lyrics are missing</string>
+    <string name="set_lyrics_wifi_only">Download on Wi-Fi only</string>
+    <string name="set_lyrics_wifi_only_desc">Automatic searches wait for a Wi-Fi connection</string>
+    <string name="set_lyrics_preload_next">Prepare the next track</string>
+    <string name="set_lyrics_preload_next_desc">Prepare only the current and next track, without keeping lyrics in memory</string>
+    <string name="set_lyrics_show_kara">Show Kara in lyrics</string>
+    <string name="set_lyrics_show_kara_desc">Display the dinosaur mascot in the lyrics overlay</string>
     <string name="set_headset_autoplay">Headset autoplay</string>
     <string name="set_headset_autoplay_desc">Always start playing when a headset is connected (may not work on all devices)</string>
     <string name="set_rewind_prev">Rewind before skipping back</string>
@@ -366,6 +378,7 @@
     <string name="desc_shuffle">Turn shuffle on or off</string>
     <string name="desc_exit">Stop playback</string>
     <string name="desc_close_lyrics">Close lyrics</string>
+    <string name="desc_open_lyrics">Show lyrics</string>
 
     <string name="desc_remove_song">Remove this song</string>
     <string name="desc_song_handle">Move this song</string>

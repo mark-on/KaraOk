@@ -20,6 +20,7 @@ package org.oxycblt.auxio.lyrics
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.BitmapFactory
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.graphics.Typeface
@@ -32,10 +33,13 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
+import com.google.android.material.button.MaterialButton
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -73,12 +77,18 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
     private val syncedLyrics = RecyclerView(context)
     private val syncedAdapter = SyncedLyricsAdapter()
     private val close = AppCompatImageButton(context)
+    private val searchOnline = MaterialButton(context)
+    private val mascot = ImageView(context)
+    private val songTitle = TextView(context)
+    private val songArtist = TextView(context)
+    private val header = LinearLayout(context)
 
     private var host: ViewGroup? = null
     private var activeLine = -1
     private var autoScrollAfterMs = 0L
 
     var onClose: (() -> Unit)? = null
+    var onSearchOnline: (() -> Unit)? = null
 
     init {
         isClickable = true
@@ -101,6 +111,18 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
             visibility = View.GONE
         }
         addView(status, centeredParams(MATCH_PARENT, WRAP_CONTENT))
+
+        searchOnline.apply {
+            setText(R.string.lbl_lyrics_search_online)
+            setOnClickListener { onSearchOnline?.invoke() }
+            visibility = View.GONE
+        }
+        addView(
+            searchOnline,
+            LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER).apply {
+                topMargin = dp(112)
+            },
+        )
 
         plainLyrics.apply {
             gravity = Gravity.CENTER_HORIZONTAL
@@ -142,6 +164,46 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
         }
         addView(syncedLyrics, LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
+        header.apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setPadding(dp(64), dp(12), dp(64), dp(12))
+            songTitle.apply {
+                gravity = Gravity.CENTER
+                textAlignment = View.TEXT_ALIGNMENT_CENTER
+                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_TitleMedium)
+                setTextColor(onSurfaceColor)
+                maxLines = 1
+                ellipsize = android.text.TextUtils.TruncateAt.END
+            }
+            songArtist.apply {
+                gravity = Gravity.CENTER
+                textAlignment = View.TEXT_ALIGNMENT_CENTER
+                setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall)
+                setTextColor(secondaryColor)
+                maxLines = 1
+                ellipsize = android.text.TextUtils.TruncateAt.END
+            }
+            addView(songTitle, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            addView(songArtist, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+        }
+        addView(header, LayoutParams(MATCH_PARENT, WRAP_CONTENT, Gravity.TOP))
+
+        mascot.apply {
+            val options = BitmapFactory.Options().apply { inSampleSize = 4 }
+            setImageBitmap(BitmapFactory.decodeResource(resources, R.drawable.kara_mascot_cutout, options))
+            contentDescription = null // Decoration, not a second playback control.
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            visibility = View.GONE
+        }
+        addView(
+            mascot,
+            LayoutParams(dp(80), dp(80), Gravity.BOTTOM or Gravity.END).apply {
+                bottomMargin = dp(12)
+                marginEnd = dp(16)
+            },
+        )
+
         close.apply {
             setImageResource(R.drawable.ic_close_24)
             imageTintList = android.content.res.ColorStateList.valueOf(onSurfaceColor)
@@ -175,8 +237,26 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
                 marginEnd = bars.right + dp(8)
                 close.layoutParams = this
             }
+            (header.layoutParams as LayoutParams).apply {
+                topMargin = bars.top + dp(8)
+                header.layoutParams = this
+            }
+            (mascot.layoutParams as LayoutParams).apply {
+                bottomMargin = bars.bottom + dp(12)
+                marginEnd = bars.right + dp(16)
+                mascot.layoutParams = this
+            }
             insets
         }
+    }
+
+    fun setShowMascot(enabled: Boolean) {
+        mascot.visibility = if (enabled && height >= dp(480)) View.VISIBLE else View.GONE
+    }
+
+    fun setTrack(title: CharSequence, artist: CharSequence) {
+        songTitle.text = title
+        songArtist.text = artist
     }
 
     fun attachTo(host: ViewGroup) {
@@ -214,6 +294,8 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
     fun render(state: LyricsLoadState) {
         progress.visibility = if (state is LyricsLoadState.Loading) View.VISIBLE else View.GONE
         status.visibility = if (state is LyricsLoadState.Unavailable) View.VISIBLE else View.GONE
+        searchOnline.visibility =
+            if (state is LyricsLoadState.Unavailable) View.VISIBLE else View.GONE
         plainScroll.visibility = View.GONE
         syncedLyrics.visibility = View.GONE
         if (state is LyricsLoadState.Unavailable) status.setText(R.string.lbl_lyrics_unavailable)
@@ -286,6 +368,7 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SyncedLineHolder {
             val view =
                 TextView(parent.context).apply {
+                    layoutParams = RecyclerView.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
                     gravity = Gravity.CENTER
                     textAlignment = View.TEXT_ALIGNMENT_CENTER
                     setTextAppearance(
@@ -309,7 +392,8 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
         fun bind(line: LyricsLine, active: Boolean) {
             textView.text = line.text.ifBlank { "•" }
             textView.setTextColor(if (active) accentColor else secondaryColor)
-            textView.alpha = if (active) 1f else 0.72f
+            // colorOnSurfaceVariant already provides the inactive hierarchy at readable contrast.
+            textView.alpha = 1f
             textView.setTypeface(null, if (active) Typeface.BOLD else Typeface.NORMAL)
         }
     }

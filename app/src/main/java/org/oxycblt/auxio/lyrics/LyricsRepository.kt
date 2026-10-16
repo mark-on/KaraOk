@@ -28,12 +28,16 @@ import org.oxycblt.musikr.Song
 import org.oxycblt.musikr.metadata.EmbeddedLyrics
 
 @Singleton
-class LyricsRepository @Inject constructor(@ApplicationContext private val context: Context) {
+class LyricsRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val preferences: LyricsPreferences,
+) {
     private val localLyrics = LocalLyricsReader(context)
     private val remoteLyrics = LrcLibClient()
-    private val resolver = LyricsResolver(DiskLyricsCache(context.cacheDir.resolve("lyrics")))
+    // Downloaded lyrics are user data, not an expendable Android cache entry.
+    private val resolver = LyricsResolver(DiskLyricsCache(context.filesDir.resolve("lyrics")))
 
-    suspend fun get(song: Song): LyricsDocument? {
+    suspend fun get(song: Song, manualSearch: Boolean = false): LyricsDocument? {
         val query =
             LyricsQuery(
                 trackName = song.name.resolve(context),
@@ -56,7 +60,10 @@ class LyricsRepository @Inject constructor(@ApplicationContext private val conte
                     LyricsSource { EmbeddedLyrics.read(context, song) },
                     LyricsSource { localLyrics.read(song) },
                 ),
-            remoteSource = LyricsSource { remoteLyrics.get(query) },
+            remoteSource = LyricsSource {
+                if (manualSearch || preferences.automaticDownloadAllowed()) remoteLyrics.get(query)
+                else null
+            },
         )
     }
 }
