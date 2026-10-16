@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- 
+
 package org.oxycblt.auxio.playback.ui.stepper
 
 import android.content.Context
@@ -71,6 +71,8 @@ class StepperOverlay(context: Context, attrs: AttributeSet?) :
 
     interface Listener {
         fun seek(direction: Direction)
+
+        fun onSingleTap()
     }
 
     init {
@@ -136,7 +138,10 @@ class StepperOverlay(context: Context, attrs: AttributeSet?) :
     override fun onTouchEvent(event: MotionEvent): Boolean =
         gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
 
-    override fun onSingleTapConfirmed(e: MotionEvent) = false
+    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+        listener?.onSingleTap()
+        return listener != null
+    }
 
     private fun enter(
         secondsView: SecondsView,

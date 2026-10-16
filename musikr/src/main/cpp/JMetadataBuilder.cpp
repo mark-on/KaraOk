@@ -23,8 +23,12 @@
 #include <taglib/mp4tag.h>
 #include <taglib/textidentificationframe.h>
 #include <taglib/attachedpictureframe.h>
+#include <taglib/synchronizedlyricsframe.h>
+#include <taglib/unsynchronizedlyricsframe.h>
 
 #include <taglib/tpropertymap.h>
+
+#include <cstdio>
 
 #include "JObjectRef.h"
 #include "JClassRef.h"
@@ -56,7 +60,33 @@ void JMetadataBuilder::setId3v2(TagLib::ID3v2::Tag &tag) {
     std::optional<TagLib::ID3v2::AttachedPictureFrame*> firstPic;
     std::optional<TagLib::ID3v2::AttachedPictureFrame*> frontCoverPic;
     for (auto frame : tag.frameList()) {
-        if (auto txxxFrame =
+        if (auto lyricsFrame =
+                dynamic_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame*>(frame)) {
+            id3v2.add_id("USLT", lyricsFrame->text());
+        } else if (auto syncedLyricsFrame =
+                dynamic_cast<TagLib::ID3v2::SynchronizedLyricsFrame*>(frame)) {
+            if (syncedLyricsFrame->timestampFormat()
+                    != TagLib::ID3v2::SynchronizedLyricsFrame::AbsoluteMilliseconds
+                    || syncedLyricsFrame->type()
+                            != TagLib::ID3v2::SynchronizedLyricsFrame::Lyrics) {
+                continue;
+            }
+            std::string lrc;
+            for (const auto &line : syncedLyricsFrame->synchedText()) {
+                const unsigned int minutes = line.time / 60000;
+                const unsigned int seconds = (line.time / 1000) % 60;
+                const unsigned int millis = line.time % 1000;
+                char timestamp[24];
+                std::snprintf(timestamp, sizeof(timestamp), "[%02u:%02u.%03u]",
+                        minutes, seconds, millis);
+                lrc += timestamp;
+                lrc += line.text.to8Bit(true);
+                lrc += '\n';
+            }
+            if (!lrc.empty()) {
+                id3v2.add_id("SYLT", TagLib::String(lrc, TagLib::String::UTF8));
+            }
+        } else if (auto txxxFrame =
                 dynamic_cast<TagLib::ID3v2::UserTextIdentificationFrame*>(frame)) {
             TagLib::String id = frame->frameID();
             TagLib::StringList frameText = txxxFrame->fieldList();

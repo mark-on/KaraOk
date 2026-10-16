@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
- 
+
 package org.oxycblt.auxio.playback
 
 import android.annotation.SuppressLint
@@ -27,6 +27,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
@@ -40,6 +43,9 @@ import org.oxycblt.auxio.R
 import org.oxycblt.auxio.databinding.FragmentPlaybackPanelBinding
 import org.oxycblt.auxio.detail.DetailViewModel
 import org.oxycblt.auxio.list.ListViewModel
+import org.oxycblt.auxio.lyrics.LyricsLoadState
+import org.oxycblt.auxio.lyrics.LyricsOverlayView
+import org.oxycblt.auxio.lyrics.LyricsViewModel
 import org.oxycblt.auxio.music.resolve
 import org.oxycblt.auxio.music.resolveNames
 import org.oxycblt.auxio.playback.queue.QueueViewModel
@@ -80,8 +86,11 @@ class PlaybackPanelFragment :
     private val detailModel: DetailViewModel by activityViewModels()
     private val listModel: ListViewModel by activityViewModels()
     private val queueModel: QueueViewModel by viewModels()
+    private val lyricsModel: LyricsViewModel by viewModels()
     private var equalizerLauncher: ActivityResultLauncher<Intent>? = null
     private var userAwarePagerCallback: UserAwarePagerCallback? = null
+    private var lyricsOverlay: LyricsOverlayView? = null
+    private var lyricsBackCallback: OnBackPressedCallback? = null
 
     override fun onCreateBinding(inflater: LayoutInflater) =
         FragmentPlaybackPanelBinding.inflate(inflater)
@@ -110,6 +119,12 @@ class PlaybackPanelFragment :
             setNavigationOnClickListener { playbackModel.openMain() }
             setOnMenuItemClickListener(this@PlaybackPanelFragment)
         }
+
+        lyricsOverlay =
+            LyricsOverlayView(requireContext()).also { overlay ->
+                overlay.onClose = lyricsModel::close
+                overlay.attachTo(binding.root as ViewGroup)
+            }
 
         binding.playbackPager?.apply {
             // intentional LTR override since thepager is a chronological element
@@ -181,6 +196,8 @@ class PlaybackPanelFragment :
         collectImmediately(playbackModel.isPlaying, ::updatePlaying)
         collectImmediately(playbackModel.isShuffled, ::updateShuffled)
         collectImmediately(playbackModel.pagerQueue, ::updatePager)
+        collectImmediately(lyricsModel.isOpen, ::updateLyricsOpen)
+        collectImmediately(lyricsModel.state, ::updateLyrics)
     }
 
     // FIXME: Old code!! Maybe not necessary anymore?
@@ -219,6 +236,10 @@ class PlaybackPanelFragment :
     //    }
 
     override fun onDestroyBinding(binding: FragmentPlaybackPanelBinding) {
+        lyricsBackCallback?.remove()
+        lyricsBackCallback = null
+        lyricsOverlay?.release()
+        lyricsOverlay = null
         equalizerLauncher = null
         binding.playbackRepeat.clearPendingIcon()
         binding.playbackSong.isSelected = false
@@ -258,6 +279,7 @@ class PlaybackPanelFragment :
     }
 
     private fun updateSong(song: Song?) {
+        lyricsModel.onSongChanged(song)
         if (song == null) {
             // Nothing to do.
             return
@@ -281,6 +303,27 @@ class PlaybackPanelFragment :
 
     private fun updatePosition(positionDs: Long) {
         requireBinding().playbackSeekBar?.positionDs = positionDs
+        val lyrics = (lyricsModel.state.value as? LyricsLoadState.Ready)?.lyrics
+        lyricsOverlay?.updatePosition(lyrics, positionDs.dsToMs())
+    }
+
+    private fun updateLyricsOpen(open: Boolean) {
+        lyricsOverlay?.setOpen(open)
+        lyricsBackCallback?.remove()
+        lyricsBackCallback =
+            if (open) {
+                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, true) {
+                    lyricsModel.close()
+                }
+            } else {
+                null
+            }
+    }
+
+    private fun updateLyrics(state: LyricsLoadState) {
+        lyricsOverlay?.render(state)
+        val lyrics = (state as? LyricsLoadState.Ready)?.lyrics
+        lyricsOverlay?.updatePosition(lyrics, playbackModel.positionDs.value.dsToMs())
     }
 
     private fun updateRepeat(repeatMode: RepeatMode) {
@@ -396,5 +439,9 @@ class PlaybackPanelFragment :
             Direction.FORWARDS -> playbackModel.stepForward()
             Direction.BACKWARDS -> playbackModel.stepBackwards()
         }
+    }
+
+    override fun onSingleTap() {
+        playbackModel.song.value?.let(lyricsModel::open)
     }
 }
