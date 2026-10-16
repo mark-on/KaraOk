@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center"><b>KaraOk</b></h1>
-<h4 align="center">Auxio, con i testi. Minimalista, locale e sincronizzato.</h4>
+<h4 align="center">Auxio, with lyrics. Minimal, local, and synchronized.</h4>
 
 <p align="center">
   <a href="https://github.com/mark-on/KaraOk/releases/latest">
@@ -21,76 +21,76 @@
 <p align="center">
   <a href="https://github.com/mark-on/KaraOk/releases/latest"><b>Download</b></a>
   ·
-  <a href="https://github.com/OxygenCobalt/Auxio"><b>Progetto originale Auxio</b></a>
+  <a href="https://github.com/OxygenCobalt/Auxio"><b>Original Auxio project</b></a>
   ·
-  <a href="LICENSE"><b>Licenza</b></a>
+  <a href="LICENSE"><b>License</b></a>
 </p>
 
-## Cos'è KaraOk?
+## What is KaraOk?
 
-**KaraOk è una fork di [Auxio](https://github.com/OxygenCobalt/Auxio) che aggiunge i testi direttamente alla schermata “In riproduzione”.**
+**KaraOk is a fork of [Auxio](https://github.com/OxygenCobalt/Auxio) that adds lyrics directly to the Now Playing screen.**
 
-Mantiene il design Material You, la riproduzione locale, le prestazioni e l'approccio essenziale di Auxio. Toccando la copertina dell'album si apre un overlay minimale: l'interfaccia rimane sullo sfondo, i testi scorrono sopra di essa e la musica continua senza interruzioni.
+It preserves Auxio's Material You design, local playback, performance, and minimalist approach. Tapping the album artwork opens a clean lyrics overlay: the player remains visible in the background, lyrics scroll above it, and playback continues uninterrupted.
 
-KaraOk usa un application ID separato (`com.markon.karaok`), quindi può essere installato insieme ad Auxio.
+KaraOk uses a separate application ID (`com.markon.karaok`), so it can be installed alongside Auxio.
 
-## Testi
+## Lyrics
 
-KaraOk cerca i testi in questo ordine:
+KaraOk looks for lyrics in this order:
 
-1. metadati incorporati nel file audio;
-2. file `.lrc` locale associato al brano;
-3. servizio online [LRCLIB](https://lrclib.net).
+1. lyrics embedded in the audio file's metadata;
+2. a local `.lrc` file associated with the track;
+3. the [LRCLIB](https://lrclib.net) online service.
 
-Sono supportati:
+Supported features include:
 
-- testi sincronizzati LRC, con evidenziazione della riga corrente;
-- scorrimento automatico basato sulla posizione di riproduzione;
-- pausa dell'auto-scroll durante lo scorrimento manuale;
-- testi non sincronizzati in una vista pulita e scorrevole;
-- aggiornamento dopo pausa, ricerca, salto o cambio traccia;
-- cache locale dei testi scaricati;
-- gestione silenziosa di rete assente, testi mancanti o LRC non validi.
+- synchronized LRC lyrics with active-line highlighting;
+- automatic scrolling based on the current playback position;
+- temporary auto-scroll suspension while scrolling manually;
+- unsynchronized lyrics in a clean, scrollable view;
+- updates after pausing, seeking, skipping, or changing tracks;
+- local caching for downloaded lyrics;
+- graceful handling of offline use, missing lyrics, and malformed LRC files.
 
-> KaraOk attualmente **legge** i testi incorporati, ma non modifica i metadati dei file audio. I testi recuperati da LRCLIB vengono conservati nella cache dell'app.
+> KaraOk currently **reads** embedded lyrics but does not modify audio-file metadata. Lyrics retrieved from LRCLIB are stored in the app's local cache.
 
-## Schermate
+## Screenshots
 
 <p align="center">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot0.png" width="245" alt="Libreria musicale">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot1.png" width="245" alt="Album">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot2.png" width="245" alt="In riproduzione">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot0.png" width="245" alt="Music library">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot1.png" width="245" alt="Albums">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot2.png" width="245" alt="Now Playing">
 </p>
 <p align="center">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot3.png" width="245" alt="Coda">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot4.png" width="245" alt="Ricerca">
-  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot5.png" width="245" alt="Impostazioni">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot3.png" width="245" alt="Queue">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot4.png" width="245" alt="Search">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot5.png" width="245" alt="Settings">
 </p>
 
-<p align="center"><i>L'interfaccia di base e le schermate derivano da Auxio; KaraOk conserva intenzionalmente lo stesso linguaggio visivo.</i></p>
+<p align="center"><i>The base interface and screenshots come from Auxio; KaraOk intentionally preserves the same visual language.</i></p>
 
-## Funzionalità principali
+## Core features
 
-- riproduzione basata su Media3 ExoPlayer;
-- interfaccia Material You edge-to-edge;
-- libreria musicale completamente locale;
-- supporto per copertine e testi incorporati;
-- file LRC locali e recupero da LRCLIB;
-- ReplayGain per MP3, FLAC, OGG, Opus e MP4;
-- riproduzione gapless;
-- playlist, ricerca, widget e Android Auto;
-- gestione delle cartelle compatibile con schede SD;
-- nessun account e nessun tracciamento.
+- playback powered by Media3 ExoPlayer;
+- an edge-to-edge Material You interface;
+- a fully local music library;
+- embedded artwork and lyrics support;
+- local LRC files and LRCLIB retrieval;
+- ReplayGain for MP3, FLAC, OGG, Opus, and MP4;
+- gapless playback;
+- playlists, search, widgets, and Android Auto;
+- SD-card-compatible folder management;
+- no account and no tracking.
 
-## Installazione
+## Installation
 
-Scarica l'APK dalla pagina [Releases](https://github.com/mark-on/KaraOk/releases). Android potrebbe chiedere di autorizzare l'installazione da sorgenti esterne.
+Download the APK from the [Releases](https://github.com/mark-on/KaraOk/releases) page. Android may ask you to allow installation from external sources.
 
-Le prime versioni di KaraOk sono pubblicate come **prerelease firmate in debug**, pensate per test e sviluppo. Una futura versione stabile richiederà una chiave di firma dedicata e mantenuta nel tempo.
+Early KaraOk builds are published as **debug-signed prereleases** intended for testing and development. A future stable release will require a dedicated signing key that is kept safely over time.
 
-## Compilazione
+## Building
 
-Il progetto richiede Java 21, Android SDK 37, NDK `28.2.13676358`, CMake `3.22.1` e un ambiente Unix. Su Windows è consigliato WSL2.
+The project requires Java 21, Android SDK 37, NDK `28.2.13676358`, CMake `3.22.1`, and a Unix environment. WSL2 is recommended on Windows.
 
 ```bash
 git clone --recurse-submodules https://github.com/mark-on/KaraOk.git
@@ -98,19 +98,19 @@ cd KaraOk
 ./gradlew :app:assembleDebug :app:testDebugUnitTest
 ```
 
-L'APK viene generato in `app/build/outputs/apk/debug/`.
+The APK is generated in `app/build/outputs/apk/debug/`.
 
-## Permessi
+## Permissions
 
-- accesso ai file audio, per indicizzare e riprodurre la musica;
-- servizio in primo piano e wake lock, per la riproduzione in background;
-- notifiche, per i controlli multimediali;
-- internet, usato esclusivamente per il recupero opzionale dei testi da LRCLIB.
+- audio-file access, to index and play music;
+- foreground service and wake lock, for background playback;
+- notifications, for media controls;
+- internet access, used only for optional lyrics retrieval from LRCLIB.
 
-Non vengono richiesti permessi aggiuntivi per cercare file LRC locali.
+No additional permission is requested to find local LRC files.
 
-## Crediti e licenza
+## Credits and license
 
-KaraOk deriva da **Auxio**, creato e mantenuto da [OxygenCobalt](https://github.com/OxygenCobalt), e conserva gli avvisi di copyright del progetto originale. Grazie agli autori di Auxio, Media3, TagLib, FFmpeg e LRCLIB.
+KaraOk is based on **Auxio**, created and maintained by [OxygenCobalt](https://github.com/OxygenCobalt), and retains the original project's copyright notices. Thanks to the contributors behind Auxio, Media3, TagLib, FFmpeg, and LRCLIB.
 
-KaraOk è software libero distribuito secondo la [GNU General Public License v3](LICENSE). Puoi usarlo, studiarlo, modificarlo e ridistribuirlo nel rispetto della licenza e delle attribuzioni originali.
+KaraOk is free software distributed under the [GNU General Public License v3](LICENSE). You may use, study, modify, and redistribute it in accordance with the license and the original attributions.
