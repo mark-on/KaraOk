@@ -1,193 +1,116 @@
-<p align="center"><img src="fastlane/metadata/android/en-US/images/icon.png" width="150"></p>
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/icon.png" width="150" alt="KaraOk icon">
+</p>
+
 <h1 align="center"><b>KaraOk</b></h1>
-<h4 align="center">A minimalist Android music player with integrated lyrics.</h4>
-<p align="center">
-    <a href="https://github.com/oxygencobalt/Auxio/releases/tag/v4.1.5">
-        <img alt="Latest Version" src="https://img.shields.io/static/v1?label=tag&message=v4.1.5&color=64B5F6&style=flat">
-    </a>
-    <a href="https://github.com/oxygencobalt/Auxio/releases/">
-        <img alt="Releases" src="https://img.shields.io/github/downloads/OxygenCobalt/Auxio/total.svg?color=4B95DE&style=flat">
-    </a>
-    <a href="https://www.gnu.org/licenses/gpl-3.0">
-        <img src="https://img.shields.io/badge/license-GPL%20v3-2B6DBE.svg?style=flat">
-    </a>
-    <img alt="Minimum SDK Version" src="https://img.shields.io/badge/API-24%2B-1450A8?style=flat">
-</p>
-<h4 align="center"><a href="/CHANGELOG.md">Changelog</a> | <a href="https://github.com/OxygenCobalt/Auxio/wiki">Wiki</a> | <a href="https://github.com/OxygenCobalt/Auxio#Donate">Donate</a></h4>
-<p align="center">
-    <a href="https://f-droid.org/app/org.oxycblt.auxio"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" width="250"></a>
-    <a href="https://accrescent.app/app/org.oxycblt.auxio">
-        <img alt="Get it on Accrescent" src="https://accrescent.app/badges/get-it-on.png" width="250">
-    </a>
-</p>
-<p align="center">
-    <a href="https://hosted.weblate.org/engage/auxio/"><img height=64 src="https://hosted.weblate.org/widgets/auxio/-/strings/287x66-grey.png" alt="Translation status" /></a>
-</p>
-
-## About
-
-KaraOk is a personal fork of [Auxio](https://github.com/OxygenCobalt/Auxio), focused on a native, minimalist lyrics experience. Tap the artwork on the Now Playing screen to open synchronized or plain lyrics sourced from embedded metadata, local LRC files, or LRCLIB.
-
-The project retains Auxio's fast local playback, Material You interface, and GPLv3 licensing while using its own application ID so KaraOk can be installed alongside Auxio.
-
-**The default branch is the development version of the repository. For a stable version, see the master branch.**
-
-## Screenshots
+<h4 align="center">Auxio, con i testi. Minimalista, locale e sincronizzato.</h4>
 
 <p align="center">
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot0.png" width=250>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot1.png" width=250>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot2.png" width=250>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot3.png" width=250>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot4.png" width=250>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot5.png" width=250>
+  <a href="https://github.com/mark-on/KaraOk/releases/latest">
+    <img alt="Latest release" src="https://img.shields.io/github/v/release/mark-on/KaraOk?color=64B5F6&style=flat">
+  </a>
+  <a href="https://github.com/mark-on/KaraOk/releases">
+    <img alt="Downloads" src="https://img.shields.io/github/downloads/mark-on/KaraOk/total.svg?color=4B95DE&style=flat">
+  </a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0">
+    <img alt="GPLv3" src="https://img.shields.io/badge/license-GPL%20v3-2B6DBE.svg?style=flat">
+  </a>
+  <img alt="Android 7+" src="https://img.shields.io/badge/Android-7.0%2B-1450A8?style=flat">
 </p>
-
-
-## Features
-
-- Playback based on [Media3 ExoPlayer](https://developer.android.com/guide/topics/media/exoplayer)
-- Snappy UI derived from the latest Material Design guidelines
-- Opinionated UX that prioritizes ease of use over edge cases
-- Customizable behavior
-- Support for disc numbers, multiple artists, release types,
-precise/original dates, sort tags, and more
-- Advanced artist system that unifies artists and album artists
-- SD Card-aware folder management
-- Reliable playlisting functionality
-- Playback state persistence
-- Android Auto support
-- Automatic gapless playback
-- Full ReplayGain support (On MP3, FLAC, OGG, OPUS, and MP4 files)
-- External equalizer support (ex. Wavelet)
-- Edge-to-edge
-- Embedded covers support
-- Search functionality
-- Headset autoplay
-- Stylish widgets that automatically adapt to their size
-- Completely private and offline
-- No rounded album covers (if you want them)
-
-## Permissions
-
-- Storage (`READ_MEDIA_AUDIO`, `READ_EXTERNAL_STORAGE`) to read and play your music files
-- Services (`FOREGROUND_SERVICE`, `WAKE_LOCK`) to keep the music playing in the background
-- Notifications (`POST_NOTIFICATION`) to indicate ongoing playback and music loading
-
-## Donate
-
-You can support Auxio's development through [my Github Sponsors page](https://github.com/sponsors/OxygenCobalt). Get the ability to prioritize features and have your profile added to the README, Release Changelogs, and even the app itself!
-
-<h3 align="center">Legendary supporters:</h3>
-<p align="center">
-    <a href="https://github.com/bkkellyh"><img src="https://avatars.githubusercontent.com/u/248118457?v=4" width=250 /></a> 
-    <a href="ttps://github.com/gruntstumper"><img src="https://avatars.githubusercontent.com/u/308816080?v=4" width=125 /></a> 
-</p>
-<h3 align="center">
-    <a href="https://github.com/bkkellyh">@bkkellyh</a> - <i>$500!</i>, <a href="https://github.com/gruntstumper">@gruntstumper</a> - $100
-</h3>
-
-<hr />
-
-<p align="center"><b>$8/month supporters:</b></p>
 
 <p align="center">
-    <a href="https://github.com/uku3lig"><img src="https://avatars.githubusercontent.com/u/61147779?v=4" width=50 /></a>
+  <a href="https://github.com/mark-on/KaraOk/releases/latest"><b>Download</b></a>
+  ·
+  <a href="https://github.com/OxygenCobalt/Auxio"><b>Progetto originale Auxio</b></a>
+  ·
+  <a href="LICENSE"><b>Licenza</b></a>
+</p>
+
+## Cos'è KaraOk?
+
+**KaraOk è una fork di [Auxio](https://github.com/OxygenCobalt/Auxio) che aggiunge i testi direttamente alla schermata “In riproduzione”.**
+
+Mantiene il design Material You, la riproduzione locale, le prestazioni e l'approccio essenziale di Auxio. Toccando la copertina dell'album si apre un overlay minimale: l'interfaccia rimane sullo sfondo, i testi scorrono sopra di essa e la musica continua senza interruzioni.
+
+KaraOk usa un application ID separato (`com.markon.karaok`), quindi può essere installato insieme ad Auxio.
+
+## Testi
+
+KaraOk cerca i testi in questo ordine:
+
+1. metadati incorporati nel file audio;
+2. file `.lrc` locale associato al brano;
+3. servizio online [LRCLIB](https://lrclib.net).
+
+Sono supportati:
+
+- testi sincronizzati LRC, con evidenziazione della riga corrente;
+- scorrimento automatico basato sulla posizione di riproduzione;
+- pausa dell'auto-scroll durante lo scorrimento manuale;
+- testi non sincronizzati in una vista pulita e scorrevole;
+- aggiornamento dopo pausa, ricerca, salto o cambio traccia;
+- cache locale dei testi scaricati;
+- gestione silenziosa di rete assente, testi mancanti o LRC non validi.
+
+> KaraOk attualmente **legge** i testi incorporati, ma non modifica i metadati dei file audio. I testi recuperati da LRCLIB vengono conservati nella cache dell'app.
+
+## Schermate
+
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot0.png" width="245" alt="Libreria musicale">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot1.png" width="245" alt="Album">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot2.png" width="245" alt="In riproduzione">
 </p>
 <p align="center">
-    And **1** Private Sponsor!
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot3.png" width="245" alt="Coda">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot4.png" width="245" alt="Ricerca">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot5.png" width="245" alt="Impostazioni">
 </p>
 
-## Building
+<p align="center"><i>L'interfaccia di base e le schermate derivano da Auxio; KaraOk conserva intenzionalmente lo stesso linguaggio visivo.</i></p>
 
-Auxio relies on a patched version of Media3 that enables some extra playback features, alongside taglib for metadata
-parsing. This adds some caveats to the build process:
-1. `cmake` and `ninja-build` must be installed before building the project.
-2. The project uses submodules, so when cloning initially, use `git clone --recurse-submodules` to properly
-download the external code.
-3. You are **unable** to build this project on windows, as the custom Media3 build runs shell scripts that
-will only work on unix-based systems.
+## Funzionalità principali
 
-### Set up Android Studio
+- riproduzione basata su Media3 ExoPlayer;
+- interfaccia Material You edge-to-edge;
+- libreria musicale completamente locale;
+- supporto per copertine e testi incorporati;
+- file LRC locali e recupero da LRCLIB;
+- ReplayGain per MP3, FLAC, OGG, Opus e MP4;
+- riproduzione gapless;
+- playlist, ricerca, widget e Android Auto;
+- gestione delle cartelle compatibile con schede SD;
+- nessun account e nessun tracciamento.
 
-#### Install Android Studio.
+## Installazione
+
+Scarica l'APK dalla pagina [Releases](https://github.com/mark-on/KaraOk/releases). Android potrebbe chiedere di autorizzare l'installazione da sorgenti esterne.
+
+Le prime versioni di KaraOk sono pubblicate come **prerelease firmate in debug**, pensate per test e sviluppo. Una futura versione stabile richiederà una chiave di firma dedicata e mantenuta nel tempo.
+
+## Compilazione
+
+Il progetto richiede Java 21, Android SDK 37, NDK `28.2.13676358`, CMake `3.22.1` e un ambiente Unix. Su Windows è consigliato WSL2.
 
 ```bash
-pkg -S android-studio
+git clone --recurse-submodules https://github.com/mark-on/KaraOk.git
+cd KaraOk
+./gradlew :app:assembleDebug :app:testDebugUnitTest
 ```
 
-#### Configuring Android Studio:
+L'APK viene generato in `app/build/outputs/apk/debug/`.
 
-- Be sure to have NDK tools, version 28.2.13676358. You can search it on Languages & Frameworks > Android SDK.
-- Install Java-21 with your system package manager
+## Permessi
 
-    ```bash
-    sudo pkg -S jdk21-openjdk
-    ```
-    Additionally: Set java version to jdk21-openjdk
+- accesso ai file audio, per indicizzare e riprodurre la musica;
+- servizio in primo piano e wake lock, per la riproduzione in background;
+- notifiche, per i controlli multimediali;
+- internet, usato esclusivamente per il recupero opzionale dei testi da LRCLIB.
 
-- Run ./gradlew assembleDebug
+Non vengono richiesti permessi aggiuntivi per cercare file LRC locali.
 
-#### Connecting to your Android Device
+## Crediti e licenza
 
-You can connect your Mobile Phone through USB to run the app. 
+KaraOk deriva da **Auxio**, creato e mantenuto da [OxygenCobalt](https://github.com/OxygenCobalt), e conserva gli avvisi di copyright del progetto originale. Grazie agli autori di Auxio, Media3, TagLib, FFmpeg e LRCLIB.
 
-1. **Enable Developer Options on your phone**
-   - Go to **Settings > About phone**  
-   - Tap **Build number** 7 times until you see *"You are now a developer!"*
-
-2. **Enable USB debugging**
-   - Go to **Settings > Developer options**  
-   - Turn on **USB debugging**
-
-3. **Connect your phone to the computer**
-   - Use a USB cable  
-   - On your phone, accept the *Allow USB debugging?* prompt
-
-4. **Verify that your device is detected**
-   ```bash
-   cd ~/Android/Sdk/platform-tools
-   ./adb devices
-   ```
-
-Android Studio also offers virtual devices that come with this pre-configured.
-
-#### Install the app on the Android Phone
-To install the app on your physical device or emulator, run this command:
-
-```bash
-./gradlew installDebug
-```
-
-Auxio should now appear in the list of Apps
-
-#### Load music to Auxio (Optional)
-
-You can move files from your pc to your device / emulator to test the music using this command:
-
-```bash
-cd ~/Android/Sdk/platform-tools
-./adb push ~Music/ /sdcard/Music
-```
-
-## Contributing
-
-Auxio accepts most contributions as long as they follow the [Contribution Guidelines](/.github/CONTRIBUTING.md).
-
-However, feature additions and major UI changes are less likely to be accepted. See
-[Why Are These Features Missing?](https://github.com/OxygenCobalt/Auxio/wiki/Why-Are-These-Features-Missing%3F)
-for more information.
-
-
-
-## License
-
-[![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](http://www.gnu.org/licenses/gpl-3.0.en.html)
-
-Auxio is Free Software: You can use, study share and improve it at your
-will. Specifically you can redistribute and/or modify it under the terms of the
-[GNU General Public License](https://www.gnu.org/licenses/gpl.html) as
-published by the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-More information can be found [here](https://github.com/OxygenCobalt/Auxio/wiki/Licenses).
+KaraOk è software libero distribuito secondo la [GNU General Public License v3](LICENSE). Puoi usarlo, studiarlo, modificarlo e ridistribuirlo nel rispetto della licenza e delle attribuzioni originali.
