@@ -1,6 +1,6 @@
 <p align="center"><img src="fastlane/metadata/android/en-US/images/icon.png" width="150"></p>
-<h1 align="center"><b>Auxio</b></h1>
-<h4 align="center">A simple, rational music player for Android.</h4>
+<h1 align="center"><b>KaraOk</b></h1>
+<h4 align="center">A minimalist Android music player with integrated lyrics.</h4>
 <p align="center">
     <a href="https://github.com/oxygencobalt/Auxio/releases/tag/v4.1.5">
         <img alt="Latest Version" src="https://img.shields.io/static/v1?label=tag&message=v4.1.5&color=64B5F6&style=flat">
@@ -26,7 +26,9 @@
 
 ## About
 
-Auxio is a local music player with a fast, reliable UI/UX without the many useless features present in other music players. Built off of modern media playback libraries, Auxio has superior library support and listening quality compared to other apps that use outdated Android functionality. In short, **It plays music.**
+KaraOk is a personal fork of [Auxio](https://github.com/OxygenCobalt/Auxio), focused on a native, minimalist lyrics experience. Tap the artwork on the Now Playing screen to open synchronized or plain lyrics sourced from embedded metadata, local LRC files, or LRCLIB.
+
+The project retains Auxio's fast local playback, Material You interface, and GPLv3 licensing while using its own application ID so KaraOk can be installed alongside Auxio.
 
 **The default branch is the development version of the repository. For a stable version, see the master branch.**
 
