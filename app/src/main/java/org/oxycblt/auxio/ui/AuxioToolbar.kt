@@ -101,8 +101,9 @@ constructor(
             text = toolbarAttrs.getText(AR.styleable.Toolbar_title)
             isVisible = !text.isNullOrEmpty()
             gravity =
-                if (titleCentered) android.view.Gravity.CENTER_HORIZONTAL
-                else android.view.Gravity.START
+                android.view.Gravity.CENTER_VERTICAL or
+                    if (titleCentered) android.view.Gravity.CENTER_HORIZONTAL
+                    else android.view.Gravity.START
             textAlignment =
                 if (titleCentered) {
                     TEXT_ALIGNMENT_CENTER

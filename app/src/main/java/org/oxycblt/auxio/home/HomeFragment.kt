@@ -166,8 +166,12 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
         binding.homeSortAction.setOnClickListener {
             onMenuItemClick(binding.homeNormalToolbar.menu.findItem(R.id.action_sort))
         }
-        binding.homeShuffleAction.setOnClickListener { playbackModel.shuffleAll() }
-        collectImmediately(homeModel.songList) { binding.homeShuffleAction.isEnabled = it.isNotEmpty() }
+        collectImmediately(homeModel.songList) {
+            binding.homeNormalToolbar.setMenuItemEnabled(
+                R.id.action_shuffle_all,
+                it.isNotEmpty(),
+            )
+        }
 
         binding.homePager.apply {
             // Update HomeViewModel whenever the user swipes through the ViewPager.
@@ -253,6 +257,10 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
                         MusicType.PLAYLISTS -> HomeFragmentDirections.sortPlaylists()
                     }
                 findNavController().navigateSafe(directions)
+                true
+            }
+            R.id.action_shuffle_all -> {
+                playbackModel.shuffleAll()
                 true
             }
             else -> {

@@ -25,4 +25,10 @@
         android:id="@+id/action_about"
         android:title="@string/lbl_about"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_shuffle_all"
+        android:icon="@drawable/ic_shuffle_on_24"
+        android:title="@string/desc_shuffle"
+        app:showAsAction="never" />
 </menu>
