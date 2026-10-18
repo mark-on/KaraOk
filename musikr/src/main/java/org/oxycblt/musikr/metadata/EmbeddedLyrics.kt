@@ -19,7 +19,8 @@
 package org.oxycblt.musikr.metadata
 
 import android.content.Context
-import java.io.FileInputStream
+import android.os.ParcelFileDescriptor
+import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.oxycblt.musikr.Song
@@ -28,7 +29,7 @@ import org.oxycblt.musikr.fs.File
 
 /** Reads lyrics tags from a song without rebuilding the music library. */
 object EmbeddedLyrics {
-    suspend fun read(context: Context, song: Song): String? =
+    suspend fun readCandidates(context: Context, song: Song): List<String> =
         withContext(Dispatchers.IO) {
             val file =
                 File(
@@ -43,29 +44,18 @@ object EmbeddedLyrics {
                     size = song.size,
                     parent = null,
                 )
-            context.contentResolver.openFileDescriptor(song.uri, "r")?.use { descriptor ->
-                FileInputStream(descriptor.fileDescriptor).use { stream ->
-                    when (val result = TagLibJNI.open(file, stream)) {
-                        is MetadataResult.Success -> result.metadata?.lyrics()
-                        else -> null
-                    }
+            val descriptor = context.contentResolver.openFileDescriptor(song.uri, "r")
+                ?: throw IOException("Audio provider returned no file descriptor")
+            // One owner for the descriptor, including when TagLib throws.
+            ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { stream ->
+                when (val result = TagLibJNI.open(file, stream)) {
+                    is MetadataResult.Success -> result.metadata?.let {
+                        EmbeddedLyricsTags.candidates(it.id3v2, it.xiph, it.mp4)
+                    }.orEmpty()
+                    MetadataResult.ProviderFailed -> throw IOException("Could not read audio metadata")
+                    MetadataResult.NoMetadata, MetadataResult.NotAudio ->
+                        throw IOException("Audio metadata could not be decoded")
                 }
             }
         }
-
-    private fun Metadata.lyrics(): String? =
-        sequenceOf(
-                id3v2["SYLT"],
-                id3v2["USLT"],
-                id3v2["TXXX:LYRICS"],
-                id3v2["TXXX:UNSYNCEDLYRICS"],
-                xiph["LYRICS"],
-                xiph["UNSYNCEDLYRICS"],
-                xiph["UNSYNCED LYRICS"],
-                mp4["©lyr"],
-                mp4["----:COM.APPLE.ITUNES:LYRICS"],
-            )
-            .filterNotNull()
-            .flatten()
-            .firstOrNull { it.isNotBlank() }
 }

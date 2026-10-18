@@ -6,9 +6,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/ui_item_bg"
     android:paddingStart="@dimen/spacing_medium"
-    android:paddingTop="@dimen/spacing_mid_medium"
+    android:paddingTop="@dimen/spacing_small"
     android:paddingEnd="@dimen/spacing_mid_medium"
-    android:paddingBottom="@dimen/spacing_mid_medium">
+    android:paddingBottom="@dimen/spacing_small">
 
     <org.oxycblt.auxio.image.CoverView
         android:id="@+id/song_album_cover"

@@ -19,6 +19,9 @@
 package org.oxycblt.auxio.home
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -149,9 +152,22 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
                 )
             }
             title = brand
+            // Decode only a thumbnail: the full mascot is unnecessary for a 32dp Home logo.
+            val mascot = BitmapFactory.decodeResource(
+                resources,
+                R.drawable.kara_mascot_cutout,
+                BitmapFactory.Options().apply { inSampleSize = 8 },
+            )
+            val size = (32 * resources.displayMetrics.density).toInt()
+            setTitleIcon(BitmapDrawable(resources, Bitmap.createScaledBitmap(mascot, size, size, true)))
             setOnMenuItemClickListener(this@HomeFragment)
             MenuCompat.setGroupDividerEnabled(menu, true)
         }
+        binding.homeSortAction.setOnClickListener {
+            onMenuItemClick(binding.homeNormalToolbar.menu.findItem(R.id.action_sort))
+        }
+        binding.homeShuffleAction.setOnClickListener { playbackModel.shuffleAll() }
+        collectImmediately(homeModel.songList) { binding.homeShuffleAction.isEnabled = it.isNotEmpty() }
 
         binding.homePager.apply {
             // Update HomeViewModel whenever the user swipes through the ViewPager.

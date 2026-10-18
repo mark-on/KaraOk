@@ -189,6 +189,20 @@ constructor(
             }
         }
 
+    /** Optional decorative branding, used only by the Home toolbar. */
+    fun setTitleIcon(drawable: android.graphics.drawable.Drawable?) {
+        binding.toolbarTitle.compoundDrawablePadding = (8 * resources.displayMetrics.density).toInt()
+        binding.toolbarTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null)
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun setMenuItemVisible(itemId: Int, visible: Boolean) {
+        val item = menuBuilder.findItem(itemId) ?: return
+        if (item.isVisible == visible) return
+        item.isVisible = visible
+        rebuildActionButtons()
+    }
+
     val menu: Menu
         get() = menuBuilder
 

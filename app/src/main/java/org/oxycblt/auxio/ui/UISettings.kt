@@ -60,13 +60,10 @@ class UISettingsImpl @Inject constructor(@ApplicationContext context: Context) :
             )
 
     override val useBlackTheme: Boolean
-        get() = sharedPreferences.getBoolean(getString(R.string.set_key_black_theme), false)
+        get() = false
 
     override var accent: Accent
-        get() =
-            Accent.from(
-                sharedPreferences.getInt(getString(R.string.set_key_accent), Accent.DEFAULT)
-            )
+        get() = Accent.from(Accent.DEFAULT)
         set(value) {
             sharedPreferences.edit {
                 putInt(getString(R.string.set_key_accent), value.index)
@@ -75,7 +72,7 @@ class UISettingsImpl @Inject constructor(@ApplicationContext context: Context) :
         }
 
     override val roundMode: Boolean
-        get() = sharedPreferences.getBoolean(getString(R.string.set_key_round_mode), true)
+        get() = true
 
     override fun migrate() {
         if (sharedPreferences.contains(OLD_KEY_ACCENT3)) {

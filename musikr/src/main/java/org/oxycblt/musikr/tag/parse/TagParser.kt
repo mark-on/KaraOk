@@ -40,9 +40,16 @@ private data object TagParserImpl : TagParser {
             //
             // In this case we override to composer in a single go so we don't accidentally
             // hybridize sort tags or MBIDs between artist/composer.
-            artistMusicBrainzIds = metadata.composerMusicBrainzIds() ?: listOf()
-            artistNames = metadata.composerNames() ?: listOf()
-            artistSortNames = metadata.composerSortNames() ?: listOf()
+            val composerNames = metadata.composerNames()
+            if (composerNames != null) {
+                artistMusicBrainzIds = metadata.composerMusicBrainzIds() ?: listOf()
+                artistNames = composerNames
+                artistSortNames = metadata.composerSortNames() ?: listOf()
+            } else {
+                // A file can contain valid artist IDs without a display-name frame. Do not
+                // discard those IDs merely because there is no composer fallback either.
+                artistNames = listOf()
+            }
         }
         return ParsedTags(
             durationMs = metadata.properties.durationMs,

@@ -32,10 +32,9 @@ internal object TagLibJNI {
      * Note: This method is blocking and should be handled as such if calling from a coroutine.
      */
     fun open(deviceFile: File, fis: FileInputStream): MetadataResult {
-        val inputStream = NativeInputStream(deviceFile, fis)
-        val tag = openNative(inputStream)
-        inputStream.close()
-        return tag
+        // The caller owns the stream. Closing it here also closes the descriptor owned by
+        // ContentResolver and can turn a successful read into a close/EBADF failure.
+        return openNative(NativeInputStream(deviceFile, fis))
     }
 
     private external fun openNative(inputStream: NativeInputStream): MetadataResult

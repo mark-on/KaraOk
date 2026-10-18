@@ -24,6 +24,7 @@
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:menu="@menu/toolbar_home"
+                app:titleTextAppearance="@style/TextAppearance.KaraOk.Brand"
                 app:title="@string/info_app_name" />
 
             <org.oxycblt.auxio.ui.AuxioToolbar
@@ -45,6 +46,32 @@
             app:tabContentStart="@dimen/spacing_medium"
             app:tabGravity="start"
             app:tabMode="scrollable" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/home_sort_action"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_sort"
+                app:icon="@drawable/ic_sort_24" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/home_shuffle_action"
+                style="@style/Widget.Auxio.Button.Playback.Skip"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/desc_shuffle"
+                app:icon="@drawable/ic_shuffle_on_24" />
+        </LinearLayout>
 
     </org.oxycblt.auxio.ui.CoordinatorAppBarLayout>
 

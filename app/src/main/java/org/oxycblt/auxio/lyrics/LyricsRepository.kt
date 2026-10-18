@@ -22,6 +22,9 @@ import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.oxycblt.auxio.music.resolve
 import org.oxycblt.auxio.music.resolveNames
 import org.oxycblt.musikr.Song
@@ -37,7 +40,7 @@ class LyricsRepository @Inject constructor(
     // Downloaded lyrics are user data, not an expendable Android cache entry.
     private val resolver = LyricsResolver(DiskLyricsCache(context.filesDir.resolve("lyrics")))
 
-    suspend fun get(song: Song, manualSearch: Boolean = false): LyricsDocument? {
+    suspend fun get(song: Song, manualSearch: Boolean = false): LyricsDocument? = withContext(Dispatchers.IO) {
         val query =
             LyricsQuery(
                 trackName = song.name.resolve(context),
@@ -53,11 +56,20 @@ class LyricsRepository @Inject constructor(
                     query.durationSeconds.toString(),
                 )
                 .joinToString("\u0000")
-        return resolver.resolve(
+        resolver.resolve(
             cacheKey = cacheKey,
             primarySources =
                 listOf(
-                    LyricsSource { EmbeddedLyrics.read(context, song) },
+                    LyricsSource {
+                        try {
+                            EmbeddedLyrics.readCandidates(context, song)
+                                .firstOrNull { LrcParser.parse(it) != null }
+                        } catch (error: CancellationException) {
+                            throw error
+                        } catch (error: Exception) {
+                            throw EmbeddedLyricsReadException(error)
+                        }
+                    },
                     LyricsSource { localLyrics.read(song) },
                 ),
             remoteSource = LyricsSource {

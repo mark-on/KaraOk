@@ -35,7 +35,13 @@ internal class NativeTagMap {
         if (correctedValues.isEmpty()) {
             return
         }
-        map[id] = correctedValues
+        // ID3 permits several USLT/SYLT frames (languages/descriptions). Preserve all of
+        // them so an unrelated last frame cannot replace the usable lyrics.
+        map[id] = if (id == "USLT" || id == "SYLT") {
+            (map[id].orEmpty() + correctedValues).distinct()
+        } else {
+            correctedValues
+        }
     }
 
     fun addCustom(description: String, value: String) {

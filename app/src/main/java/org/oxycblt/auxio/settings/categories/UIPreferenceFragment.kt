@@ -18,16 +18,10 @@
  
 package org.oxycblt.auxio.settings.categories
 
-import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import org.oxycblt.auxio.R
 import org.oxycblt.auxio.settings.BasePreferenceFragment
-import org.oxycblt.auxio.settings.ui.WrappedDialogPreference
-import org.oxycblt.auxio.ui.UISettings
-import org.oxycblt.auxio.util.isNight
-import org.oxycblt.auxio.util.navigateSafe
 import timber.log.Timber as L
 
 /**
@@ -37,15 +31,6 @@ import timber.log.Timber as L
  */
 @AndroidEntryPoint
 class UIPreferenceFragment : BasePreferenceFragment(R.xml.preferences_ui) {
-    @Inject lateinit var uiSettings: UISettings
-
-    override fun onOpenDialogPreference(preference: WrappedDialogPreference) {
-        if (preference.key == getString(R.string.set_key_accent)) {
-            L.d("Navigating to accent dialog")
-            findNavController().navigateSafe(UIPreferenceFragmentDirections.accentSettings())
-        }
-    }
-
     override fun onSetupPreference(preference: Preference) {
         when (preference.key) {
             getString(R.string.set_key_theme) -> {
@@ -54,23 +39,6 @@ class UIPreferenceFragment : BasePreferenceFragment(R.xml.preferences_ui) {
                     Preference.OnPreferenceChangeListener { _, value ->
                         L.d("Theme changed, recreating")
                         requireActivity().recreate()
-                        true
-                    }
-            }
-            getString(R.string.set_key_accent) -> {
-                L.d("Configuring accent setting")
-                preference.summary = getString(uiSettings.accent.name)
-            }
-            getString(R.string.set_key_black_theme) -> {
-                L.d("Configuring black theme setting")
-                preference.onPreferenceChangeListener =
-                    Preference.OnPreferenceChangeListener { _, _ ->
-                        val activity = requireActivity()
-                        if (activity.isNight) {
-                            L.d("Black theme changed in night mode, recreating")
-                            activity.recreate()
-                        }
-
                         true
                     }
             }

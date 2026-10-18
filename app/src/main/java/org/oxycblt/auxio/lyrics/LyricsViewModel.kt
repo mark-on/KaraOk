@@ -24,10 +24,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.oxycblt.musikr.Song
+import timber.log.Timber as L
 
 sealed interface LyricsLoadState {
     data object Idle : LyricsLoadState
@@ -37,6 +39,8 @@ sealed interface LyricsLoadState {
     data class Ready(val lyrics: LyricsDocument) : LyricsLoadState
 
     data object Unavailable : LyricsLoadState
+
+    data object ReadError : LyricsLoadState
 }
 
 @HiltViewModel
@@ -67,6 +71,10 @@ constructor(
         savedStateHandle[KEY_OPEN] = false
     }
 
+    fun retry() {
+        currentSong?.let { load(it) }
+    }
+
     fun searchOnline() {
         currentSong?.let { load(it, manualSearch = true) }
     }
@@ -77,24 +85,38 @@ constructor(
         if (!preferences.automaticDownloadAllowed()) return
         val upcoming = queue.getOrNull(index) ?: return
         prefetchJob = viewModelScope.launch {
-            if (!isOpen.value) repository.get(upcoming)
-            if (preferences.preloadNext) queue.getOrNull(index + 1)?.let { repository.get(it) }
+            try {
+                if (!isOpen.value) repository.get(upcoming)
+                if (preferences.preloadNext) queue.getOrNull(index + 1)?.let { repository.get(it) }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                L.w(error, "Unable to prepare lyrics")
+            }
         }
     }
 
     fun onSongChanged(song: Song?) {
         if (song == currentSong) return
         currentSong = song
-        if (isOpen.value && song != null) load(song)
+        loadJob?.cancel()
+        if (song == null) state.value = LyricsLoadState.Idle
+        else if (isOpen.value) load(song)
     }
 
     private fun load(song: Song, manualSearch: Boolean = false) {
         loadJob?.cancel()
         state.value = LyricsLoadState.Loading
         loadJob = viewModelScope.launch {
-            state.value =
+            state.value = try {
                 repository.get(song, manualSearch)?.let(LyricsLoadState::Ready)
                     ?: LyricsLoadState.Unavailable
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                L.w(error, "Unable to read lyrics")
+                LyricsLoadState.ReadError
+            }
         }
     }
 

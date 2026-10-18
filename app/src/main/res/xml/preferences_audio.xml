@@ -58,13 +58,6 @@
             app:title="@string/set_lyrics_preload_next"
             app:summary="@string/set_lyrics_preload_next_desc" />
 
-        <SwitchPreferenceCompat
-            app:key="@string/set_key_lyrics_show_kara"
-            app:defaultValue="true"
-            app:dependency="@string/set_key_lyrics_enabled"
-            app:title="@string/set_lyrics_show_kara"
-            app:summary="@string/set_lyrics_show_kara_desc" />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/set_replay_gain">

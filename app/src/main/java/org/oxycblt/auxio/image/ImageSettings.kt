@@ -52,7 +52,7 @@ class ImageSettingsImpl @Inject constructor(@ApplicationContext context: Context
             ) ?: CoverMode.BALANCED
 
     override val forceSquareCovers: Boolean
-        get() = sharedPreferences.getBoolean(getString(R.string.set_key_square_covers), false)
+        get() = true
 
     override fun migrate() {
         // Show album covers and Ignore MediaStore covers were unified in 3.0.0

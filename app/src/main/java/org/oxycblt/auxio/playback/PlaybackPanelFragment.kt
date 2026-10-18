@@ -95,7 +95,7 @@ class PlaybackPanelFragment :
     override fun onResume() {
         super.onResume()
         if (!lyricsModel.preferences.enabled) lyricsModel.close()
-        lyricsOverlay?.setShowMascot(lyricsModel.preferences.showKara)
+        updateLyricsActions()
         coverPagerAdapter.notifyDataSetChanged()
     }
 
@@ -131,8 +131,16 @@ class PlaybackPanelFragment :
             LyricsOverlayView(requireContext()).also { overlay ->
                 overlay.onClose = lyricsModel::close
                 overlay.onSearchOnline = lyricsModel::searchOnline
+                overlay.onRetry = lyricsModel::retry
+                overlay.onPrevious = playbackModel::prev
+                overlay.onNext = playbackModel::next
+                overlay.onTogglePlaying = playbackModel::togglePlaying
+                overlay.onSeek = playbackModel::seekTo
+                overlay.onQueue = {
+                    lyricsModel.close()
+                    playbackModel.openQueue()
+                }
                 overlay.attachTo(binding.root as ViewGroup)
-                overlay.post { overlay.setShowMascot(lyricsModel.preferences.showKara) }
             }
 
         binding.playbackPager?.apply {
@@ -190,6 +198,9 @@ class PlaybackPanelFragment :
             setOnClickListener { playbackModel.togglePlaying() }
         }
         binding.playbackSkipNext.setOnClickListener { playbackModel.next() }
+        binding.playbackQueueAction?.setOnClickListener { playbackModel.openQueue() }
+        binding.playbackLyricsAction?.setOnClickListener { onSingleTap() }
+        updateLyricsActions()
         binding.playbackShuffle.setOnClickListener { playbackModel.toggleShuffled() }
         binding.playbackMore?.setOnClickListener {
             playbackModel.song.value?.let {
@@ -260,6 +271,16 @@ class PlaybackPanelFragment :
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_open_lyrics -> {
+                onSingleTap()
+                return true
+            }
+            R.id.action_open_queue -> {
+                playbackModel.openQueue()
+                return true
+            }
+        }
         if (item.itemId == R.id.action_open_equalizer) {
             // Launch the system equalizer app, if possible.
             L.d("Launching equalizer")
@@ -287,6 +308,19 @@ class PlaybackPanelFragment :
         playbackModel.seekTo(positionDs)
     }
 
+    private fun updateLyricsActions() {
+        val binding = requireBinding()
+        binding.playbackLyricsAction?.visibility =
+            if (lyricsModel.preferences.enabled) View.VISIBLE else View.GONE
+        binding.playbackToolbar.setMenuItemVisible(
+            R.id.action_open_lyrics,
+            lyricsModel.preferences.enabled && binding.playbackLyricsAction == null,
+        )
+        binding.playbackToolbar.setMenuItemVisible(
+            R.id.action_open_queue, binding.playbackQueueAction == null,
+        )
+    }
+
     private fun updateSong(song: Song?) {
         lyricsModel.onSongChanged(song)
         if (song == null) {
@@ -299,7 +333,7 @@ class PlaybackPanelFragment :
         L.d("Updating song display: $song")
         binding.playbackSong.text = song.name.resolve(context)
         binding.playbackArtist.text = song.artists.resolveNames(context)
-        lyricsOverlay?.setTrack(binding.playbackSong.text, binding.playbackArtist.text)
+        lyricsOverlay?.setTrack(song)
         binding.playbackAlbum?.text = song.album.name.resolve(context)
         binding.playbackSeekBar?.durationDs = song.durationMs.msToDs()
     }
@@ -344,7 +378,8 @@ class PlaybackPanelFragment :
 
     private fun updatePlaying(isPlaying: Boolean) {
         requireBinding().playbackPlayPause.isChecked = isPlaying
-        requireBinding().playbackSeekBar?.setWaveEnabled(isPlaying)
+        requireBinding().playbackSeekBar?.setWaveEnabled(false)
+        lyricsOverlay?.setPlaying(isPlaying)
     }
 
     private fun updateShuffled(isShuffled: Boolean) {

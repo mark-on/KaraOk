@@ -447,71 +447,12 @@ class MainFragment :
         isFastScrolling: Boolean,
         tabType: MusicType,
     ) {
-        // If there are no songs, it's likely that the library has not been loaded, so
-        // displaying the shuffle FAB makes no sense. We also don't want the fast scroll
-        // popup to overlap with the FAB, so we hide the FAB when fast scrolling too.
-        if (shouldHideAllFabs(binding, songs, isFastScrolling)) {
-            L.d("Hiding fab: [empty: ${songs.isEmpty()} scrolling: $isFastScrolling]")
+        // Shuffle lives in the Home action row. Keep the existing playlist creation/import
+        // speed dial and its lifecycle/back handling intact.
+        if (tabType != MusicType.PLAYLISTS || shouldHideAllFabs(binding, songs, isFastScrolling)) {
             forceHideAllFabs()
-        } else {
-            if (tabType != MusicType.PLAYLISTS) {
-                if (binding.homeShuffleFab.isOrWillBeShown) {
-                    return
-                }
-
-                if (binding.homeNewPlaylistFab.mainFab.isOrWillBeShown) {
-                    L.d("Animating transition")
-                    binding.homeNewPlaylistFab.hide(
-                        object : FloatingActionButton.OnVisibilityChangedListener() {
-                            override fun onHidden(fab: FloatingActionButton) {
-                                super.onHidden(fab)
-                                if (
-                                    shouldHideAllFabs(
-                                        binding,
-                                        homeModel.songList.value,
-                                        homeModel.isFastScrolling.value,
-                                    )
-                                ) {
-                                    return
-                                }
-                                binding.homeShuffleFab.show()
-                            }
-                        }
-                    )
-                } else {
-                    L.d("Showing immediately")
-                    binding.homeShuffleFab.show()
-                }
-            } else {
-                L.d("Showing playlist button")
-                if (binding.homeNewPlaylistFab.mainFab.isOrWillBeShown) {
-                    return
-                }
-
-                if (binding.homeShuffleFab.isOrWillBeShown) {
-                    L.d("Animating transition")
-                    binding.homeShuffleFab.hide(
-                        object : FloatingActionButton.OnVisibilityChangedListener() {
-                            override fun onHidden(fab: FloatingActionButton) {
-                                super.onHidden(fab)
-                                if (
-                                    shouldHideAllFabs(
-                                        binding,
-                                        homeModel.songList.value,
-                                        homeModel.isFastScrolling.value,
-                                    )
-                                ) {
-                                    return
-                                }
-                                binding.homeNewPlaylistFab.show()
-                            }
-                        }
-                    )
-                } else {
-                    L.d("Showing immediately")
-                    binding.homeNewPlaylistFab.show()
-                }
-            }
+        } else if (!binding.homeNewPlaylistFab.mainFab.isOrWillBeShown) {
+            binding.homeNewPlaylistFab.show()
         }
     }
 

@@ -20,7 +20,7 @@ package org.oxycblt.musikr.metadata
 
 import android.content.ContentResolver
 import android.content.Context
-import java.io.FileInputStream
+import android.os.ParcelFileDescriptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.oxycblt.musikr.fs.File
@@ -48,9 +48,10 @@ private class MetadataExtractorImpl(private val contentResolver: ContentResolver
     MetadataExtractor {
     override suspend fun extract(deviceFile: File): MetadataResult =
         withContext(Dispatchers.IO) {
-            contentResolver.openFileDescriptor(deviceFile.uri, "r")?.use { fd ->
-                val fis = FileInputStream(fd.fileDescriptor)
-                TagLibJNI.open(deviceFile, fis).also { fis.close() }
-            } ?: MetadataResult.ProviderFailed
+            val descriptor = contentResolver.openFileDescriptor(deviceFile.uri, "r")
+                ?: return@withContext MetadataResult.ProviderFailed
+            ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { stream ->
+                TagLibJNI.open(deviceFile, stream)
+            }
         }
 }

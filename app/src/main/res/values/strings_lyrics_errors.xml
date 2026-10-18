@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lbl_lyrics_read_error">Could not read the audio file. Your embedded lyrics may still be present. Check that the file is accessible, then retry.</string>
+    <string name="lbl_lyrics_retry">Retry reading file</string>
+</resources>

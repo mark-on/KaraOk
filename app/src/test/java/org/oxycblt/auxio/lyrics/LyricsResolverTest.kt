@@ -22,9 +22,67 @@ import java.nio.file.Files
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
+import org.junit.Assert.fail
 import org.junit.Test
+import org.oxycblt.musikr.metadata.EmbeddedLyricsTags
 
 class LyricsResolverTest {
+    private fun emptyCache() = object : LyricsCache {
+        override suspend fun read(key: String): String? = null
+        override suspend fun write(key: String, lyrics: String) = Unit
+    }
+
+    @Test
+    fun malformedEmbeddedFrameDoesNotHideAnotherFrame() = runBlocking {
+        val candidates = EmbeddedLyricsTags.candidates(
+            mapOf("SYLT" to listOf("[ar:No lines]"), "USLT" to listOf("Embedded\nSecond line")),
+            emptyMap(), emptyMap(),
+        )
+        val document = LyricsResolver(emptyCache()).resolve(
+            "song", listOf(LyricsSource { candidates.firstOrNull { LrcParser.parse(it) != null } }),
+            LyricsSource { error("Must not contact the network") },
+        )
+        assertEquals("Embedded\nSecond line", requireNotNull(document).plainText)
+    }
+
+    @Test
+    fun reportsEmbeddedReadFailureInsteadOfClaimingNoLyrics() = runBlocking {
+        val failure = EmbeddedLyricsReadException(java.io.IOException("Unavailable file"))
+        try {
+            LyricsResolver(emptyCache()).resolve(
+                "song", listOf(LyricsSource { throw failure }), LyricsSource { null },
+            )
+            fail("Expected the embedded read failure")
+        } catch (actual: EmbeddedLyricsReadException) {
+            assertSame(failure, actual)
+        }
+    }
+
+    @Test
+    fun localSidecarRemainsUsableAfterEmbeddedReadFailure() = runBlocking {
+        val document = LyricsResolver(emptyCache()).resolve(
+            "song", listOf(
+                LyricsSource { throw EmbeddedLyricsReadException(java.io.IOException()) },
+                LyricsSource { "[00:01.00]Local line" },
+            ), LyricsSource { error("Must not contact the network") },
+        )
+        assertEquals("Local line", requireNotNull(document).lines.single().text)
+    }
+
+    @Test
+    fun malformedRemoteResponseDoesNotHideEmbeddedReadFailure() = runBlocking {
+        val failure = EmbeddedLyricsReadException(java.io.IOException())
+        try {
+            LyricsResolver(emptyCache()).resolve(
+                "song", listOf(LyricsSource { throw failure }), LyricsSource { "[ar:No lines]" },
+            )
+            fail("Expected the embedded read failure")
+        } catch (actual: EmbeddedLyricsReadException) {
+            assertSame(failure, actual)
+        }
+    }
+
     @Test
     fun usesSourcesInPriorityOrder() = runBlocking {
         val cacheDirectory = Files.createTempDirectory("lyrics-cache").toFile()

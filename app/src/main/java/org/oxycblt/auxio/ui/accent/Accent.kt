@@ -154,7 +154,7 @@ class Accent private constructor(val index: Int) {
         }
 
         /** The default accent. */
-        val DEFAULT = 3 // KaraOk violet; dynamic coloring remains selectable.
+        val DEFAULT = 3 // Fixed KaraOk violet palette; light/dark/system remain selectable.
 
         /** The amount of valid accents. */
         val MAX =

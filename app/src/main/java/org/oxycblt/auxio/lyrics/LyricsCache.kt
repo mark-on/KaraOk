@@ -19,6 +19,7 @@
 package org.oxycblt.auxio.lyrics
 
 import java.io.File
+import java.io.IOException
 import java.security.MessageDigest
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -68,16 +69,29 @@ class LyricsResolver(private val cache: LyricsCache) {
         primarySources: List<LyricsSource>,
         remoteSource: LyricsSource,
     ): LyricsDocument? {
+        var embeddedFailure: EmbeddedLyricsReadException? = null
         for (source in primarySources) {
-            val parsed = source.loadSafely()?.let(LrcParser::parse)
+            val raw = try {
+                source.loadSafely()
+            } catch (error: EmbeddedLyricsReadException) {
+                embeddedFailure = error
+                null
+            }
+            val parsed = raw?.let(LrcParser::parse)
             if (parsed != null) return parsed
         }
 
         cache.read(cacheKey)?.let(LrcParser::parse)?.let {
             return it
         }
-        val downloaded = remoteSource.loadSafely() ?: return null
-        val parsed = LrcParser.parse(downloaded) ?: return null
+        val downloaded = remoteSource.loadSafely() ?: run {
+            embeddedFailure?.let { throw it }
+            return null
+        }
+        val parsed = LrcParser.parse(downloaded) ?: run {
+            embeddedFailure?.let { throw it }
+            return null
+        }
         cache.write(cacheKey, downloaded)
         return parsed
     }
@@ -87,7 +101,12 @@ class LyricsResolver(private val cache: LyricsCache) {
             load()
         } catch (error: CancellationException) {
             throw error
+        } catch (error: EmbeddedLyricsReadException) {
+            throw error
         } catch (_: Exception) {
             null
         }
 }
+
+class EmbeddedLyricsReadException(cause: Throwable) :
+    IOException("Embedded lyrics could not be read", cause)

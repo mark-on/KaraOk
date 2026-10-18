@@ -21,9 +21,6 @@ class LyricsPreferences @Inject constructor(@ApplicationContext private val cont
     val preloadNext: Boolean
         get() = preferences.getBoolean(context.getString(R.string.set_key_lyrics_preload_next), true)
 
-    val showKara: Boolean
-        get() = preferences.getBoolean(context.getString(R.string.set_key_lyrics_show_kara), true)
-
     fun automaticDownloadAllowed(): Boolean {
         if (!enabled || !autoSearch) return false
         if (!preferences.getBoolean(context.getString(R.string.set_key_lyrics_wifi_only), true)) {

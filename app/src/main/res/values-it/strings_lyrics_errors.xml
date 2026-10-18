@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lbl_lyrics_read_error">Impossibile leggere il file audio. I testi incorporati potrebbero essere ancora presenti. Verifica che il file sia accessibile, poi riprova.</string>
+    <string name="lbl_lyrics_retry">Riprova a leggere il file</string>
+</resources>
