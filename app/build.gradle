@@ -16,8 +16,8 @@ android {
 
     defaultConfig {
         applicationId "com.markon.karaok"
-        versionName "4.1.5-karaok.3"
-        versionCode 78
+        versionName "4.1.5-karaok.4"
+        versionCode 79
 
         minSdk min_sdk
         // randomly flickers between deprecated and required depending on what mood my gradle is in
