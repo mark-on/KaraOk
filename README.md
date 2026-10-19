@@ -93,7 +93,7 @@ Early KaraOk builds are published as **debug-signed prereleases** intended for t
 
 ## Building
 
-The project requires Java 21, Android SDK 37, NDK `28.2.13676358`, CMake `3.22.1`, and a Unix environment. WSL2 is recommended on Windows.
+KaraOk can be built directly in Android Studio on Windows, Linux, or macOS. The project requires Java 21, Android SDK 37, NDK `28.2.13676358`, and CMake `3.22.1`; no WSL or Unix shell is required for a normal build.
 
 ```bash
 git clone --recurse-submodules https://github.com/mark-on/KaraOk.git
@@ -102,6 +102,8 @@ cd KaraOk
 ```
 
 The APK is generated in `app/build/outputs/apk/debug/`.
+
+See [BUILDING.md](BUILDING.md) for the Android Studio setup and troubleshooting steps.
 
 ## Permissions
 

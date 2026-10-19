@@ -1,0 +1,4 @@
+127f37a126ef8db13595749eb2aa072cdaf338eab26825961f93ddcb7fbe8baa  lib/arm64-v8a/libffmpegJNI.so
+ae6a71dfbcbbe90a6a8e8c69831c0cf26a9d0d947f814497a92b7ed216a5613f  lib/armeabi-v7a/libffmpegJNI.so
+af4c152acbed23d6ec402dd3c9e8af6217a8a2e5519a83cee7e7df86bd18ff5e  lib/x86/libffmpegJNI.so
+13ed9ef00be74a25f5850d996440a2e714b3968b5404a8138009e103c12c40f2  lib/x86_64/libffmpegJNI.so

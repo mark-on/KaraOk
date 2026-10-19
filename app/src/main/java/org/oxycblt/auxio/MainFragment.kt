@@ -118,7 +118,12 @@ class MainFragment :
         playbackSheetBehavior.makeBackgroundDrawable(requireContext())
         val queueSheetBehavior =
             binding.queueSheet.coordinatorLayoutBehavior as QueueBottomSheetBehavior?
-        queueSheetBehavior?.uiSettings = uiSettings
+        queueSheetBehavior?.apply {
+            uiSettings = this@MainFragment.uiSettings
+            // The queue is opened only from the player action. There is deliberately no
+            // persistent bottom handle and no drag gesture competing with playback controls.
+            isDraggable = false
+        }
 
         elevationNormal = binding.context.getDimen(MR.dimen.m3_sys_elevation_level1)
 
@@ -157,11 +162,8 @@ class MainFragment :
         )
 
         if (queueSheetBehavior != null) {
-            // In portrait mode, set up click listeners on the stacked sheets.
-            L.d("Configuring stacked bottom sheets")
-            unlikelyToBeNull(binding.queueHandleWrapper).setOnClickListener {
-                playbackModel.openQueue()
-            }
+            // In portrait mode, the queue is action-only: it has no persistent bottom handle.
+            L.d("Configuring action-only queue sheet")
         } else {
             // Dual-pane mode, manually style the static queue sheet.
             L.d("Configuring dual-pane bottom sheet")
@@ -593,8 +595,9 @@ class MainFragment :
             L.d("Unhiding and enabling playback sheet")
             val queueSheetBehavior =
                 binding.queueSheet.coordinatorLayoutBehavior as QueueBottomSheetBehavior?
-            // Queue sheet behavior is either collapsed or expanded, no hiding needed
-            queueSheetBehavior?.isDraggable = true
+            // Queue sheet behavior is either collapsed or expanded, no hiding needed. It stays
+            // non-draggable and is opened explicitly from the queue action in the player.
+            queueSheetBehavior?.isDraggable = false
             playbackSheetBehavior.apply {
                 // Make sure the view is draggable, at least until the draw checks kick in.
                 isDraggable = true

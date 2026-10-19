@@ -96,7 +96,7 @@ class PlaybackPanelFragment :
         super.onResume()
         if (!lyricsModel.preferences.enabled) lyricsModel.close()
         updateLyricsActions()
-        coverPagerAdapter.notifyDataSetChanged()
+        refreshPlaybackCover()
     }
 
     override fun onCreateBinding(inflater: LayoutInflater) =
@@ -353,6 +353,11 @@ class PlaybackPanelFragment :
 
     private fun updateLyricsOpen(open: Boolean) {
         lyricsOverlay?.setOpen(open)
+        if (!open) {
+            // The player may have been recreated or its image request reclaimed while the
+            // full-screen lyrics view was visible. Rebind the visible page when returning.
+            refreshPlaybackCover()
+        }
         lyricsBackCallback?.remove()
         lyricsBackCallback =
             if (open) {
@@ -362,6 +367,20 @@ class PlaybackPanelFragment :
             } else {
                 null
             }
+    }
+
+    private fun refreshPlaybackCover() {
+        val pager = binding?.playbackPager ?: return
+        pager.post {
+            if (binding == null) return@post
+            val position = pager.currentItem
+            if (position in coverPagerAdapter.currentList.indices) {
+                coverPagerAdapter.notifyItemChanged(position)
+            } else {
+                // Covers may not have reached the adapter yet during activity restoration.
+                coverPagerAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     private fun updateLyrics(state: LyricsLoadState) {

@@ -115,6 +115,7 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
     private val squareishShapeAppearance: ShapeAppearanceModel
     private val circularShapeAppearance: ShapeAppearanceModel
     private var currentShapeAppearance: ShapeAppearanceModel
+    private var contentInitialized = false
 
     init {
         // Obtain some StyledImageView attributes to use later when theming the custom view.
@@ -190,6 +191,18 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
 
     override fun onFinishInflate() {
         super.onFinishInflate()
+        initializeContent()
+    }
+
+    /**
+     * Complete setup for both XML-inflated and programmatically-created cover views.
+     *
+     * Programmatic views do not receive [onFinishInflate], which previously left the compact
+     * cover in the lyrics header without its internal image child.
+     */
+    private fun initializeContent() {
+        if (contentInitialized) return
+        contentInitialized = true
 
         // The image isn't added if other children have populated the body. This is by design.
         if (isEmpty()) {
@@ -267,6 +280,8 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
     }
 
     override fun onAttachedToWindow() {
+        // onFinishInflate() is not called when CoverView is instantiated directly from Kotlin.
+        initializeContent()
         super.onAttachedToWindow()
         invalidateRootAlpha()
         invalidatePlaybackIndicatorAlpha(playbackIndicator ?: return)

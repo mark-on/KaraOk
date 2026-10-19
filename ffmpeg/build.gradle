@@ -1,0 +1,28 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'androidx.media3.decoder.ffmpeg'
+    compileSdk target_sdk
+
+    defaultConfig {
+        minSdk min_sdk
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+
+    sourceSets.main.jniLibs.srcDir "$rootDir/prebuilt/native/ffmpeg/lib"
+}
+
+dependencies {
+    implementation "androidx.media3:media3-decoder:1.11.0"
+    implementation "androidx.media3:media3-exoplayer:1.11.0"
+    implementation "androidx.annotation:annotation:1.9.1"
+    implementation "com.google.guava:guava:33.3.1-android"
+    compileOnly "org.checkerframework:checker-qual:3.49.5"
+}

@@ -150,9 +150,10 @@ dependencies {
 
     // --- THIRD PARTY ---
 
-    // Exoplayer (Vendored)
+    // ExoPlayer. The FFmpeg Java bridge is kept locally because Google does not publish the
+    // optional native decoder as a ready-to-use Maven artifact.
     implementation "androidx.media3:media3-exoplayer:1.11.0"
-    implementation "androidx.media3:media3-decoder-ffmpeg:1.11.0"
+    implementation project(":ffmpeg")
 
     // Image loading
     implementation 'io.coil-kt.coil3:coil-core:3.6.0'

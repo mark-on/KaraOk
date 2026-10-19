@@ -1,5 +1,4 @@
 pluginManagement {
-    includeBuild('media/build-logic-settings')
     repositories {
         google()
         mavenCentral()
@@ -8,7 +7,6 @@ pluginManagement {
 }
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
-    id 'gradlebuild.media3-settings-logic'
 }
 
 dependencyResolutionManagement {
@@ -19,8 +17,7 @@ dependencyResolutionManagement {
     }
 }
 
-includeMedia3.execute(file('media'))
-
 rootProject.name = "KaraOk"
 include ':app'
+include ':ffmpeg'
 include ':musikr'
