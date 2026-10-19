@@ -6,7 +6,7 @@ KaraOk is configured to build directly from Android Studio on Windows, Linux, an
 
 - Android Studio with support for Android Gradle Plugin 9.1.0
 - the Embedded JDK (JBR) 21 selected as the Gradle JDK
-- Android SDK Platform 37
+- Android SDK Platform 36
 - Android SDK Build-Tools 36.0.0 or newer
 - Android NDK `28.2.13676358`
 - CMake `3.22.1`

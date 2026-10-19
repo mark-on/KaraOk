@@ -156,7 +156,7 @@ dependencies {
     implementation project(":ffmpeg")
 
     // Image loading
-    implementation 'io.coil-kt.coil3:coil-core:3.6.0'
+    implementation 'io.coil-kt.coil3:coil-core:3.5.0'
 
     // Material
     // TODO: Exactly figure out the conditions that the 1.7.0 ripple bug occurred so you can just

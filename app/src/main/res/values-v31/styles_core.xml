@@ -2,7 +2,8 @@
 <resources>
 
     <style name="Theme.Auxio.V31" parent="Theme.Auxio.V29">
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/karaok_launcher_foreground</item>
+        <item name="android:windowSplashScreenBackground">@color/karaok_launcher_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/karaok_splash_foreground</item>
         <item name="android:windowSplashScreenAnimationDuration">350</item>
     </style>
 
