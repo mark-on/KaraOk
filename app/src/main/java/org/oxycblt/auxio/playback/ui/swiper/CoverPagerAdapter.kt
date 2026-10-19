@@ -19,7 +19,6 @@
 package org.oxycblt.auxio.playback.ui.swiper
 
 import android.view.ViewGroup
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import org.oxycblt.auxio.databinding.ItemCoverBinding
 import org.oxycblt.auxio.list.adapter.FlexibleListAdapter
@@ -35,16 +34,13 @@ import org.oxycblt.musikr.Song
  * @param listener The [StepperOverlay.Listener] that step gesture events will be forwarded to
  * @author Alexander Capehart (OxygenCobalt)
  */
-class CoverPagerAdapter(
-    private val listener: StepperOverlay.Listener,
-    private val lyricsEnabled: () -> Boolean,
-) :
+class CoverPagerAdapter(private val listener: StepperOverlay.Listener) :
     FlexibleListAdapter<Song, CoverViewHolder>(CoverViewHolder.DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, pos: Int) = CoverViewHolder.from(parent)
 
     override fun onBindViewHolder(viewHolder: CoverViewHolder, pos: Int) {
-        viewHolder.bind(currentList[pos], listener, lyricsEnabled())
+        viewHolder.bind(currentList[pos], listener)
     }
 }
 
@@ -61,11 +57,9 @@ class CoverViewHolder private constructor(private val binding: ItemCoverBinding)
      * @param song The new [Song] to bind.
      * @param listener An [StepperOverlay.Listener] to bind fast seek interactions to.
      */
-    fun bind(song: Song, listener: StepperOverlay.Listener, lyricsEnabled: Boolean) {
+    fun bind(song: Song, listener: StepperOverlay.Listener) {
         binding.cover.bind(song)
         binding.coverFastSeekOverlay.listener = listener
-        binding.coverLyrics.visibility = if (lyricsEnabled) View.VISIBLE else View.GONE
-        binding.coverLyrics.setOnClickListener { listener.onSingleTap() }
     }
 
     companion object {

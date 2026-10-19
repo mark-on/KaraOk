@@ -45,4 +45,8 @@
 
     </PreferenceCategory>
 
+    <Preference
+        app:selectable="false"
+        app:title="@string/info_created_by" />
+
 </PreferenceScreen>

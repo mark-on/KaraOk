@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="info_created_by" translatable="false">Created by mark-on</string>
     <!-- Info namespace | App labels -->
     <string name="info_app_name" translatable="false">KaraOk</string>
 

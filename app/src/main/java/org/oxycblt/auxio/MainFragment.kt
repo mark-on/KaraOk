@@ -21,6 +21,7 @@ package org.oxycblt.auxio
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewTreeObserver
 import android.view.WindowInsets
 import androidx.activity.BackEventCompat
@@ -92,6 +93,7 @@ class MainFragment :
     private var detailBackCallback: DetailBackPressedCallback? = null
     private var selectionBackCallback: SelectionBackPressedCallback? = null
     private var speedDialBackCallback: SpeedDialBackPressedCallback? = null
+    private var openQueueCallback: BackportBottomSheetBehavior.BottomSheetCallback? = null
     private var navigationListener: DialogAwareNavigationListener? = null
     private var lastInsets: WindowInsets? = null
     private var elevationNormal = 0f
@@ -258,6 +260,12 @@ class MainFragment :
 
     override fun onDestroyBinding(binding: FragmentMainBinding) {
         super.onDestroyBinding(binding)
+        openQueueCallback?.let {
+            val playbackSheetBehavior =
+                binding.playbackSheet.coordinatorLayoutBehavior as PlaybackBottomSheetBehavior
+            playbackSheetBehavior.removeBottomSheetCallback(it)
+        }
+        openQueueCallback = null
         speedDialBackCallback = null
         sheetBackCallback = null
         detailBackCallback = null
@@ -507,7 +515,6 @@ class MainFragment :
         val directions =
             when (outer) {
                 is Outer.Settings -> MainFragmentDirections.preferences()
-                is Outer.About -> MainFragmentDirections.about()
                 null -> return
             }
         findNavController().navigateSafe(directions)
@@ -578,13 +585,34 @@ class MainFragment :
             binding.playbackSheet.coordinatorLayoutBehavior as PlaybackBottomSheetBehavior
         val queueSheetBehavior =
             (binding.queueSheet.coordinatorLayoutBehavior ?: return) as QueueBottomSheetBehavior
-        if (
-            playbackSheetBehavior.state == BackportBottomSheetBehavior.STATE_EXPANDED &&
-                queueSheetBehavior.targetState == BackportBottomSheetBehavior.STATE_COLLAPSED
-        ) {
-            // Playback sheet is expanded and queue sheet is collapsed, we can expand it.
+
+        if (queueSheetBehavior.targetState != BackportBottomSheetBehavior.STATE_COLLAPSED) return
+
+        if (playbackSheetBehavior.state == BackportBottomSheetBehavior.STATE_EXPANDED) {
+            // The full player is already visible, so the queue can open immediately.
             queueSheetBehavior.state = BackportBottomSheetBehavior.STATE_EXPANDED
+            return
         }
+
+        // The compact player requested the queue. Expand the full player first and open the
+        // nested queue only after its parent has finished settling.
+        openQueueCallback?.let(playbackSheetBehavior::removeBottomSheetCallback)
+        val callback =
+            object : BackportBottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState != BackportBottomSheetBehavior.STATE_EXPANDED) return
+                    playbackSheetBehavior.removeBottomSheetCallback(this)
+                    openQueueCallback = null
+                    if (queueSheetBehavior.targetState == BackportBottomSheetBehavior.STATE_COLLAPSED) {
+                        queueSheetBehavior.state = BackportBottomSheetBehavior.STATE_EXPANDED
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+            }
+        openQueueCallback = callback
+        playbackSheetBehavior.addBottomSheetCallback(callback)
+        playbackSheetBehavior.state = BackportBottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun tryShowSheets() {

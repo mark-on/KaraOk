@@ -24,6 +24,7 @@ import android.graphics.Typeface
 import android.os.SystemClock
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -78,7 +79,6 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
     private val plainScroll = ScrollView(context)
     private val syncedLyrics = RecyclerView(context)
     private val syncedAdapter = SyncedLyricsAdapter()
-    private val close = AppCompatImageButton(context)
     private val searchOnline = MaterialButton(context)
     private val retry = MaterialButton(context)
     private val songCover = CoverView(context)
@@ -94,7 +94,6 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
     private var activeLine = -1
     private var autoScrollAfterMs = 0L
 
-    var onClose: (() -> Unit)? = null
     var onSearchOnline: (() -> Unit)? = null
     var onRetry: (() -> Unit)? = null
     var onPrevious: (() -> Unit)? = null
@@ -111,7 +110,6 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
         column.orientation = LinearLayout.VERTICAL
         addView(column, LayoutParams(MATCH_PARENT, MATCH_PARENT))
         val toolbar = LinearLayout(context).apply { gravity = Gravity.CENTER_VERTICAL }
-        toolbar.addView(action(R.drawable.ic_back_24, R.string.desc_close_lyrics) { onClose?.invoke() })
         toolbar.addView(TextView(context).apply {
             setText(R.string.set_lyrics)
             setTextColor(onSurfaceColor)
@@ -233,25 +231,6 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
         column.addView(trackHeader, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         column.addView(content, LinearLayout.LayoutParams(MATCH_PARENT, 0, 1f))
 
-        close.apply {
-            setImageResource(R.drawable.ic_close_24)
-            imageTintList = android.content.res.ColorStateList.valueOf(onSurfaceColor)
-            background =
-                context
-                    .obtainStyledAttributes(
-                        intArrayOf(android.R.attr.selectableItemBackgroundBorderless)
-                    )
-                    .let {
-                        try {
-                            it.getDrawable(0)
-                        } finally {
-                            it.recycle()
-                        }
-                    }
-            contentDescription = context.getString(R.string.desc_close_lyrics)
-            setOnClickListener { onClose?.invoke() }
-        }
-        toolbar.addView(close, LinearLayout.LayoutParams(dp(48), dp(48)))
         footer.orientation = LinearLayout.VERTICAL
         seekBar.setWaveEnabled(false)
         seekBar.listener = object : StyledSeekBar.Listener {
@@ -266,7 +245,6 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
             layoutDirection = View.LAYOUT_DIRECTION_LTR
             setPadding(0, 0, 0, dp(12))
         }
-        controls.addView(action(R.drawable.ic_down_24, R.string.desc_close_lyrics) { onClose?.invoke() })
         controls.addView(action(R.drawable.ic_skip_prev_24, R.string.desc_skip_prev) { onPrevious?.invoke() })
         configureAction(playPause, R.drawable.ic_play_24, R.string.desc_play_pause) { onTogglePlaying?.invoke() }
         playPause.background = android.graphics.drawable.GradientDrawable().apply {
@@ -288,6 +266,18 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
             column.setPadding(bars.left, bars.top, bars.right, 0)
             insets
         }
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        // Lyrics live inside the draggable Now Playing bottom sheet. Keep every gesture that
+        // starts on the overlay inside it, otherwise a vertical lyrics scroll can be intercepted
+        // as a request to collapse the player and appear to dismiss the lyrics screen.
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> parent?.requestDisallowInterceptTouchEvent(true)
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL ->
+                parent?.requestDisallowInterceptTouchEvent(false)
+        }
+        return super.dispatchTouchEvent(event)
     }
 
     private fun action(icon: Int, description: Int, callback: () -> Unit) =

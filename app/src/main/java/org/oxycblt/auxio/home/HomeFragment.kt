@@ -166,13 +166,6 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
         binding.homeSortAction.setOnClickListener {
             onMenuItemClick(binding.homeNormalToolbar.menu.findItem(R.id.action_sort))
         }
-        collectImmediately(homeModel.songList) {
-            binding.homeNormalToolbar.setMenuItemEnabled(
-                R.id.action_shuffle_all,
-                it.isNotEmpty(),
-            )
-        }
-
         binding.homePager.apply {
             // Update HomeViewModel whenever the user swipes through the ViewPager.
             // This would be implemented in HomeFragment itself, but OnPageChangeCallback
@@ -228,7 +221,7 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
         }
 
         return when (item.itemId) {
-            // Handle main actions (Search, Settings, About)
+            // Handle main actions (Search, Settings)
             R.id.action_search -> {
                 L.d("Navigating to search")
                 findNavController().navigateSafe(HomeFragmentDirections.search())
@@ -239,12 +232,6 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
                 homeModel.showSettings()
                 true
             }
-            R.id.action_about -> {
-                L.d("Navigating to about")
-                homeModel.showAbout()
-                true
-            }
-
             // Handle sort menu
             R.id.action_sort -> {
                 // Junk click event when opening the menu
@@ -257,10 +244,6 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
                         MusicType.PLAYLISTS -> HomeFragmentDirections.sortPlaylists()
                     }
                 findNavController().navigateSafe(directions)
-                true
-            }
-            R.id.action_shuffle_all -> {
-                playbackModel.shuffleAll()
                 true
             }
             else -> {

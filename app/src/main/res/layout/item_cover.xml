@@ -34,17 +34,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/cover_lyrics"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="12dp"
-            android:background="@drawable/bg_lyrics_badge"
-            android:contentDescription="@string/desc_open_lyrics"
-            android:padding="12dp"
-            android:src="@drawable/ic_lyrics_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@android:color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </org.oxycblt.auxio.playback.ui.PlaybackMaskableFrameLayout>

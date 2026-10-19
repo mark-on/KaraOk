@@ -81,7 +81,7 @@ class PlaybackPanelFragment :
     Toolbar.OnMenuItemClickListener,
     StyledSeekBar.Listener,
     StepperOverlay.Listener {
-    private val coverPagerAdapter = CoverPagerAdapter(this) { lyricsModel.preferences.enabled }
+    private val coverPagerAdapter = CoverPagerAdapter(this)
     private val playbackModel: PlaybackViewModel by activityViewModels()
     private val detailModel: DetailViewModel by activityViewModels()
     private val listModel: ListViewModel by activityViewModels()
@@ -129,7 +129,6 @@ class PlaybackPanelFragment :
 
         lyricsOverlay =
             LyricsOverlayView(requireContext()).also { overlay ->
-                overlay.onClose = lyricsModel::close
                 overlay.onSearchOnline = lyricsModel::searchOnline
                 overlay.onRetry = lyricsModel::retry
                 overlay.onPrevious = playbackModel::prev
