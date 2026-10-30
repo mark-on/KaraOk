@@ -73,6 +73,8 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
         )
 
     private val progress = ProgressBar(context)
+    private val loadingStatus = TextView(context)
+    private val loadingState = LinearLayout(context)
     private val status = TextView(context)
     private val statusScroll = ScrollView(context)
     private val plainLyrics = TextView(context)
@@ -118,8 +120,21 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
         }, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
         column.addView(toolbar, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
 
-        progress.visibility = View.GONE
-        content.addView(progress, centeredParams(WRAP_CONTENT, WRAP_CONTENT))
+        loadingState.apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            visibility = View.GONE
+        }
+        loadingStatus.apply {
+            setText(R.string.lbl_lyrics_downloading)
+            setTextColor(secondaryColor)
+            setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodyLarge)
+            gravity = Gravity.CENTER
+            setPadding(0, dp(12), 0, 0)
+        }
+        loadingState.addView(progress)
+        loadingState.addView(loadingStatus)
+        content.addView(loadingState, centeredParams(WRAP_CONTENT, WRAP_CONTENT))
 
         status.apply {
             gravity = Gravity.CENTER
@@ -337,7 +352,11 @@ class LyricsOverlayView(context: Context) : FrameLayout(context) {
     }
 
     fun render(state: LyricsLoadState) {
-        progress.visibility = if (state is LyricsLoadState.Loading) View.VISIBLE else View.GONE
+        val loading =
+            state is LyricsLoadState.Loading || state is LyricsLoadState.SearchingOnline
+        loadingState.visibility = if (loading) View.VISIBLE else View.GONE
+        loadingStatus.visibility =
+            if (state is LyricsLoadState.SearchingOnline) View.VISIBLE else View.GONE
         val readError = state is LyricsLoadState.ReadError
         status.visibility = if (state is LyricsLoadState.Unavailable || readError) View.VISIBLE else View.GONE
         statusScroll.visibility = status.visibility

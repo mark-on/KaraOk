@@ -32,6 +32,7 @@
     <string name="lbl_album_details">Vai all\'album</string>
     <string name="lbl_save">Salva</string>
     <string name="lbl_about">Informazioni</string>
+    <string name="lbl_lyrics_downloading">Download del testo…</string>
     <string name="lbl_version">Versione</string>
     <string name="lbl_code">Codice sorgente</string>
     <string name="lbl_licenses">Licenze</string>

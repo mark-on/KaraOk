@@ -19,6 +19,7 @@
 package org.oxycblt.auxio.lyrics
 
 import java.nio.file.Files
+import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -137,6 +138,40 @@ class LyricsResolverTest {
             assertEquals("Saved line", requireNotNull(saved).lines.single().text)
         } finally {
             cacheDirectory.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun readsLegacyCacheKeyAfterSwitchingToStableSongKey() = runBlocking {
+        val cache =
+            object : LyricsCache {
+                override suspend fun read(key: String) =
+                    if (key == "legacy-metadata-key") "[00:01]Legacy saved line" else null
+
+                override suspend fun write(key: String, lyrics: String) = Unit
+            }
+        val lyrics =
+            LyricsResolver(cache).resolve(
+                cacheKey = "stable-song-uid",
+                primarySources = emptyList(),
+                remoteSource = LyricsSource { error("Must not contact the network") },
+                fallbackCacheKeys = listOf("legacy-metadata-key"),
+            )
+        assertEquals("Legacy saved line", requireNotNull(lyrics).lines.single().text)
+    }
+
+    @Test
+    fun diskCacheDoesNotHideWriteFailures() = runBlocking {
+        val invalidDirectory = Files.createTempFile("lyrics-cache-file", ".tmp").toFile()
+        try {
+            try {
+                DiskLyricsCache(invalidDirectory).write("song", "[00:01]Lyrics")
+                fail("Expected cache write to fail")
+            } catch (_: IOException) {
+                // Expected: callers must know that a displayed download was not persisted.
+            }
+        } finally {
+            invalidDirectory.delete()
         }
     }
 }

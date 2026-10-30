@@ -36,6 +36,8 @@ sealed interface LyricsLoadState {
 
     data object Loading : LyricsLoadState
 
+    data object SearchingOnline : LyricsLoadState
+
     data class Ready(val lyrics: LyricsDocument) : LyricsLoadState
 
     data object Unavailable : LyricsLoadState
@@ -59,9 +61,11 @@ constructor(
     private var currentSong: Song? = null
     private var loadJob: Job? = null
     private var prefetchJob: Job? = null
+    private var prefetchSignature: List<String> = emptyList()
 
     fun open(song: Song) {
         prefetchJob?.cancel()
+        prefetchSignature = emptyList()
         currentSong = song
         savedStateHandle[KEY_OPEN] = true
         load(song)
@@ -76,22 +80,36 @@ constructor(
     }
 
     fun searchOnline() {
+        if (state.value is LyricsLoadState.SearchingOnline && loadJob?.isActive == true) return
         currentSong?.let { load(it, manualSearch = true) }
     }
 
     /** Preload at most the playing track and its immediate successor; retain only disk data. */
     fun onQueueChanged(queue: List<Song>, index: Int) {
+        if (!preferences.automaticDownloadAllowed()) {
+            prefetchJob?.cancel()
+            prefetchSignature = emptyList()
+            return
+        }
+        val songs =
+            buildList {
+                queue.getOrNull(index)?.let(::add)
+                if (preferences.preloadNext) queue.getOrNull(index + 1)?.let(::add)
+            }
+        val signature = songs.map { it.uid.toString() }
+        if (signature.isEmpty() || signature == prefetchSignature) return
         prefetchJob?.cancel()
-        if (!preferences.automaticDownloadAllowed()) return
-        val upcoming = queue.getOrNull(index) ?: return
+        prefetchSignature = signature
         prefetchJob = viewModelScope.launch {
             try {
-                if (!isOpen.value) repository.get(upcoming)
-                if (preferences.preloadNext) queue.getOrNull(index + 1)?.let { repository.get(it) }
+                for (song in songs) {
+                    if (song != currentSong || !isOpen.value) repository.get(song)
+                }
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
                 L.w(error, "Unable to prepare lyrics")
+                if (prefetchSignature == signature) prefetchSignature = emptyList()
             }
         }
     }
@@ -106,7 +124,8 @@ constructor(
 
     private fun load(song: Song, manualSearch: Boolean = false) {
         loadJob?.cancel()
-        state.value = LyricsLoadState.Loading
+        state.value =
+            if (manualSearch) LyricsLoadState.SearchingOnline else LyricsLoadState.Loading
         loadJob = viewModelScope.launch {
             state.value = try {
                 repository.get(song, manualSearch)?.let(LyricsLoadState::Ready)

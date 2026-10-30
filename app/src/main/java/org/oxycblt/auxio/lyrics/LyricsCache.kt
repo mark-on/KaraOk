@@ -19,10 +19,15 @@
 package org.oxycblt.auxio.lyrics
 
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.security.MessageDigest
+import java.nio.charset.StandardCharsets
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 interface LyricsCache {
@@ -32,25 +37,45 @@ interface LyricsCache {
 }
 
 class DiskLyricsCache(private val directory: File) : LyricsCache {
+    private val writeMutex = Mutex()
+
     override suspend fun read(key: String): String? =
         withContext(Dispatchers.IO) {
             runCatching { fileFor(key).takeIf(File::isFile)?.readText() }.getOrNull()
         }
 
     override suspend fun write(key: String, lyrics: String) =
-        withContext(Dispatchers.IO) {
-            runCatching {
-                directory.mkdirs()
+        withContext(Dispatchers.IO + NonCancellable) {
+            writeMutex.withLock {
+                if (!directory.isDirectory && !directory.mkdirs()) {
+                    throw IOException("Unable to create lyrics directory: $directory")
+                }
                 val destination = fileFor(key)
-                val temporary = File(directory, "${destination.name}.tmp")
-                temporary.writeText(lyrics)
-                if (!temporary.renameTo(destination)) {
-                    destination.writeText(lyrics)
+                val temporary = File.createTempFile("${destination.name}.", ".tmp", directory)
+                try {
+                    temporary.writeAndSync(lyrics)
+                    if (destination.exists() && !destination.delete()) {
+                        throw IOException("Unable to replace cached lyrics: $destination")
+                    }
+                    if (!temporary.renameTo(destination)) {
+                        destination.writeAndSync(lyrics)
+                    }
+                    if (!destination.isFile || destination.length() == 0L) {
+                        throw IOException("Cached lyrics were not persisted: $destination")
+                    }
+                } finally {
                     temporary.delete()
                 }
             }
-            Unit
         }
+
+    private fun File.writeAndSync(text: String) {
+        FileOutputStream(this).use { output ->
+            output.write(text.toByteArray(StandardCharsets.UTF_8))
+            output.flush()
+            output.fd.sync()
+        }
+    }
 
     private fun fileFor(key: String): File {
         val digest = MessageDigest.getInstance("SHA-256").digest(key.toByteArray())
@@ -68,6 +93,7 @@ class LyricsResolver(private val cache: LyricsCache) {
         cacheKey: String,
         primarySources: List<LyricsSource>,
         remoteSource: LyricsSource,
+        fallbackCacheKeys: List<String> = emptyList(),
     ): LyricsDocument? {
         var embeddedFailure: EmbeddedLyricsReadException? = null
         for (source in primarySources) {
@@ -81,8 +107,10 @@ class LyricsResolver(private val cache: LyricsCache) {
             if (parsed != null) return parsed
         }
 
-        cache.read(cacheKey)?.let(LrcParser::parse)?.let {
-            return it
+        (listOf(cacheKey) + fallbackCacheKeys).distinct().forEach { key ->
+            cache.read(key)?.let(LrcParser::parse)?.let {
+                return it
+            }
         }
         val downloaded = remoteSource.loadSafely() ?: run {
             embeddedFailure?.let { throw it }
@@ -92,7 +120,9 @@ class LyricsResolver(private val cache: LyricsCache) {
             embeddedFailure?.let { throw it }
             return null
         }
-        cache.write(cacheKey, downloaded)
+        // Once a remote response has been received, finish its small disk write even if the
+        // screen or prefetch job is cancelled. A visible result must also survive the next launch.
+        withContext(NonCancellable) { cache.write(cacheKey, downloaded) }
         return parsed
     }
 

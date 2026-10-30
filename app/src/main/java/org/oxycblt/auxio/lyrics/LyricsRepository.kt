@@ -48,7 +48,7 @@ class LyricsRepository @Inject constructor(
                 albumName = song.album.name.resolve(context),
                 durationSeconds = (song.durationMs / 1000).coerceAtLeast(0),
             )
-        val cacheKey =
+        val legacyCacheKey =
             listOf(
                     query.trackName,
                     query.artistName,
@@ -57,7 +57,10 @@ class LyricsRepository @Inject constructor(
                 )
                 .joinToString("\u0000")
         resolver.resolve(
-            cacheKey = cacheKey,
+            // The music UID is deliberately stable across app launches and independent of the
+            // current locale. Keep the old metadata key as a read fallback for existing installs.
+            cacheKey = song.uid.toString(),
+            fallbackCacheKeys = listOf(legacyCacheKey),
             primarySources =
                 listOf(
                     LyricsSource {
