@@ -1,0 +1,7 @@
+Integra il kit di branding KaraOK allegato nel mio progetto Android.
+Usa il coniglietto bianco inclinato con occhiolino e la nota musicale, su sfondo viola #7B0EFC.
+Leggi README_PER_CODEX.md; copia/adatta le risorse native da android/app/src/main/res senza sovrascrivere temi o funzionalità del progetto.
+Configura ic_launcher, ic_launcher_round, ic_stat_karaok (bianca/trasparente per notifiche), ic_splash_karaok per splash di sistema Android 12+.
+Se il progetto usa Flutter, Expo o React Native, integra le sorgenti SVG/PNG secondo il framework.
+Usa la PNG 1080x1920 soltanto se serve una vera schermata di avvio personalizzata; non impostarla come sfondo dello splash Android 12+.
+Verifica compilazione, forma della adaptive icon e visualizzazione reale su Android.

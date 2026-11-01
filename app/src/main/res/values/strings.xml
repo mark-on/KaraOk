@@ -311,7 +311,7 @@
     <string name="set_lyrics_preload_next">Prepare the next track</string>
     <string name="set_lyrics_preload_next_desc">Prepare only the current and next track, without keeping lyrics in memory</string>
     <string name="set_lyrics_show_kara">Show Kara in lyrics</string>
-    <string name="set_lyrics_show_kara_desc">Display the dinosaur mascot in the lyrics overlay</string>
+    <string name="set_lyrics_show_kara_desc">Display the KaraOK mascot in the lyrics overlay</string>
     <string name="set_headset_autoplay">Headset autoplay</string>
     <string name="set_headset_autoplay_desc">Always start playing when a headset is connected (may not work on all devices)</string>
     <string name="set_rewind_prev">Rewind before skipping back</string>

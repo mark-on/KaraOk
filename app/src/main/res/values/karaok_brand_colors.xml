@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="karaok_purple">#7B0EFC</color>
+    <color name="karaok_purple_light">#8515FF</color>
+    <color name="karaok_purple_dark">#7510F3</color>
+    <color name="karaok_white">#FFFFFF</color>
+</resources>

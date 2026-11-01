@@ -19,9 +19,6 @@
 package org.oxycblt.auxio.home
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -30,6 +27,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.MenuCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -136,7 +134,7 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
         )
         binding.homeNormalToolbar.apply {
             val brand = SpannableString(getString(R.string.info_app_name))
-            val accentStart = brand.indexOf("Ok")
+            val accentStart = brand.indexOf("OK")
             if (accentStart >= 0) {
                 brand.setSpan(
                     ForegroundColorSpan(
@@ -152,14 +150,11 @@ class HomeFragment : SelectionFragment<FragmentHomeBinding>() {
                 )
             }
             title = brand
-            // Decode only a thumbnail: the full mascot is unnecessary for a 32dp Home logo.
-            val mascot = BitmapFactory.decodeResource(
-                resources,
-                R.drawable.kara_mascot_cutout,
-                BitmapFactory.Options().apply { inSampleSize = 8 },
+            val mascot = AppCompatResources.getDrawable(context, R.drawable.ic_stat_karaok)
+            mascot?.mutate()?.setTint(
+                MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary, 0xFF7B0EFC.toInt())
             )
-            val size = (32 * resources.displayMetrics.density).toInt()
-            setTitleIcon(BitmapDrawable(resources, Bitmap.createScaledBitmap(mascot, size, size, true)))
+            setTitleIcon(mascot)
             setOnMenuItemClickListener(this@HomeFragment)
             MenuCompat.setGroupDividerEnabled(menu, true)
         }

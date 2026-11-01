@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="app/src/main/res/drawable-nodpi/karaok_logo.png" width="150" alt="KaraOk dinosaur logo">
+  <img src="branding/KaraOK_Android_Brand_Kit/02_png_high_res/karaok_icon_512.png" width="150" alt="KaraOK bunny logo">
 </p>
 
-<h1 align="center"><b>KaraOk</b></h1>
+<h1 align="center"><b>KaraOK</b></h1>
 <h4 align="center">Auxio, with lyrics. Minimal, local, and synchronized.</h4>
 
 <p align="center">
@@ -26,17 +26,19 @@
   <a href="LICENSE"><b>License</b></a>
 </p>
 
-## What is KaraOk?
+## What is KaraOK?
 
-**KaraOk is a fork of [Auxio](https://github.com/OxygenCobalt/Auxio) that adds lyrics directly to the Now Playing screen.**
+**KaraOK is a fork of [Auxio](https://github.com/OxygenCobalt/Auxio) that adds lyrics directly to the Now Playing screen.**
 
-It preserves Auxio's Material You foundations, local playback, performance, and minimalist approach. KaraOk adds its own violet-and-mint theme and dinosaur launcher artwork. Tapping the album artwork or its lyrics icon opens a clean lyrics overlay: the player remains visible in the background, lyrics scroll above it, and playback continues uninterrupted.
+It preserves Auxio's Material You foundations, local playback, performance, and minimalist approach. KaraOK adds its own violet-and-mint theme and bunny branding. Tapping the album artwork opens a clean lyrics overlay: the player remains visible in the background, lyrics scroll above it, and playback continues uninterrupted.
 
-KaraOk uses a separate application ID (`com.markon.karaok`), so it can be installed alongside Auxio.
+KaraOK uses a separate application ID (`com.markon.karaok`), so it can be installed alongside Auxio.
+
+The original bunny artwork, SVG sources, PNG exports, and previews are preserved in [the branding kit](branding/KaraOK_Android_Brand_Kit/). Android uses the optimized resources in `app/src/main/res/`; source previews are not packaged into the APK.
 
 ## Lyrics
 
-KaraOk looks for lyrics in this order:
+KaraOK looks for lyrics in this order:
 
 1. lyrics embedded in the audio file's metadata;
 2. a local `.lrc` file associated with the track;
@@ -55,7 +57,7 @@ Supported features include:
 - a manual Search online action when lyrics are missing;
 - graceful handling of offline use, missing lyrics, and malformed LRC files.
 
-> KaraOk currently **reads** embedded lyrics but does not modify audio-file metadata. Automatic online searching is off by default. Downloaded lyrics remain in the app's private files until app data is cleared.
+> KaraOK currently **reads** embedded lyrics but does not modify audio-file metadata. Automatic online searching is off by default. Downloaded lyrics remain in the app's private files until app data is cleared.
 
 ## Screenshots
 
@@ -70,7 +72,7 @@ Supported features include:
   <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/shot5.png" width="245" alt="Settings">
 </p>
 
-<p align="center"><i>These are inherited Auxio screenshots, not captures of the current KaraOk redesign. Updated screenshots will follow device testing.</i></p>
+<p align="center"><i>These are inherited Auxio screenshots, not captures of the current KaraOK redesign. Updated screenshots will follow device testing.</i></p>
 
 ## Core features
 
@@ -89,11 +91,11 @@ Supported features include:
 
 Download the APK from the [Releases](https://github.com/mark-on/KaraOk/releases) page. Android may ask you to allow installation from external sources.
 
-Early KaraOk builds are published as **debug-signed prereleases** intended for testing and development. A future stable release will require a dedicated signing key that is kept safely over time.
+Early KaraOK builds are published as **debug-signed prereleases** intended for testing and development. A future stable release will require a dedicated signing key that is kept safely over time.
 
 ## Building
 
-KaraOk can be built directly in Android Studio on Windows, Linux, or macOS. The project requires Java 21, Android SDK 36, NDK `28.2.13676358`, and CMake `3.22.1`; no WSL or Unix shell is required for a normal build.
+KaraOK can be built directly in Android Studio on Windows, Linux, or macOS. The project requires Java 21, Android SDK 36, NDK `28.2.13676358`, and CMake `3.22.1`; no WSL or Unix shell is required for a normal build.
 
 ```bash
 git clone --recurse-submodules https://github.com/mark-on/KaraOk.git
@@ -117,6 +119,6 @@ No additional permission is requested to find local LRC files.
 
 ## Credits and license
 
-KaraOk is based on **Auxio**, created and maintained by [OxygenCobalt](https://github.com/OxygenCobalt), and retains the original project's copyright notices. Thanks to the contributors behind Auxio, Media3, TagLib, FFmpeg, and LRCLIB.
+KaraOK is based on **Auxio**, created and maintained by [OxygenCobalt](https://github.com/OxygenCobalt), and retains the original project's copyright notices. Thanks to the contributors behind Auxio, Media3, TagLib, FFmpeg, and LRCLIB.
 
-KaraOk is free software distributed under the [GNU General Public License v3](LICENSE). You may use, study, modify, and redistribute it in accordance with the license and the original attributions.
+KaraOK is free software distributed under the [GNU General Public License v3](LICENSE). You may use, study, modify, and redistribute it in accordance with the license and the original attributions.

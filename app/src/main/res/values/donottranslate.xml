@@ -2,7 +2,7 @@
 <resources>
     <string name="info_created_by" translatable="false">Created by mark-on</string>
     <!-- Info namespace | App labels -->
-    <string name="info_app_name" translatable="false">KaraOk</string>
+    <string name="info_app_name" translatable="false">KaraOK</string>
 
     <!-- Format Namespace | Value formatting/plurals -->
     <string name="fmt_two" translatable="false">%1$s • %2$s</string>
